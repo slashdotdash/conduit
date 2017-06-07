@@ -59,6 +59,24 @@ config :logger, level: :info
 #     config :conduit, ConduitWeb.Endpoint, server: true
 #
 
+# Configure the event store database
+config :eventstore, EventStore.Storage,
+  serializer: Commanded.Serialization.JsonSerializer,
+  username: "postgres",
+  password: "postgres",
+  database: "conduit_eventstore_prod",
+  hostname: "localhost",
+  pool_size: 10
+
+# Configure the read store database
+config :conduit, Conduit.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  username: "postgres",
+  password: "postgres",
+  database: "conduit_readstore_prod",
+  hostname: "localhost",
+  pool_size: 15
+
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
 import_config "prod.secret.exs"
