@@ -20,6 +20,7 @@ defmodule Conduit.Mixfile do
       extra_applications: [
         :logger,
         :runtime_tools,
+        :eventstore,
       ],
     ]
   end
@@ -29,8 +30,10 @@ defmodule Conduit.Mixfile do
 
   defp deps do
     [
-      {:phoenix, "~> 1.3.0"},
-      {:phoenix_ecto, "~> 3.2"},
+      {:commanded, "~> 0.15"},
+      {:commanded_eventstore_adapter, "~> 0.3"},
+      {:phoenix, "~> 1.3"},
+      {:phoenix_ecto, "~> 3.3"},
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"}
@@ -39,6 +42,7 @@ defmodule Conduit.Mixfile do
 
   defp aliases do
     [
+      "event_store.reset": ["event_store.drop", "event_store.create", "event_store.init"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       "test": ["ecto.create --quiet", "ecto.migrate", "test"],

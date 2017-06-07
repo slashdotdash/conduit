@@ -36,11 +36,20 @@ config :logger, :console, format: "[$level] $message\n"
 # in production as building large stacktraces may be expensive.
 config :phoenix, :stacktrace_depth, 20
 
-# Configure your database
+# Configure the event store database
+config :eventstore, EventStore.Storage,
+  serializer: Commanded.Serialization.JsonSerializer,
+  username: "postgres",
+  password: "postgres",
+  database: "conduit_eventstore_dev",
+  hostname: "localhost",
+  pool_size: 10
+
+# Configure the read store database
 config :conduit, Conduit.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "postgres",
   password: "postgres",
-  database: "conduit_dev",
+  database: "conduit_readstore_dev",
   hostname: "localhost",
   pool_size: 10
