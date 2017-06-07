@@ -2,7 +2,7 @@ defmodule ConduitWeb.UserControllerTest do
   use ConduitWeb.ConnCase
 
   alias Conduit.Accounts
-  alias Conduit.Accounts.User
+  alias Conduit.Accounts.Projections.User
 
   @create_attrs %{bio: "some bio", email: "some email", hashed_password: "some hashed_password", image: "some image", username: "some username"}
   @update_attrs %{bio: "some updated bio", email: "some updated email", hashed_password: "some updated hashed_password", image: "some updated image", username: "some updated username"}
