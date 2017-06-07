@@ -1,8 +1,9 @@
-defmodule Conduit.Accounts.User do
+defmodule Conduit.Accounts.Projections.User do
   use Ecto.Schema
-  import Ecto.Changeset
-  alias Conduit.Accounts.User
 
+  import Ecto.Changeset
+
+  alias Conduit.Accounts.Projections.User
 
   schema "accounts_users" do
     field :bio, :string

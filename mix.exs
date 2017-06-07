@@ -32,6 +32,7 @@ defmodule Conduit.Mixfile do
     [
       {:commanded, "~> 0.15"},
       {:commanded_eventstore_adapter, "~> 0.3"},
+      {:ex_machina, "~> 2.0", only: :test},
       {:phoenix, "~> 1.3"},
       {:phoenix_ecto, "~> 3.3"},
       {:postgrex, ">= 0.0.0"},
