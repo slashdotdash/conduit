@@ -4,8 +4,8 @@ defmodule Conduit.Accounts do
   """
 
   import Ecto.Query, warn: false
-  alias Conduit.Repo
 
+  alias Conduit.Repo
   alias Conduit.Accounts.Projections.User
 
   @doc """
