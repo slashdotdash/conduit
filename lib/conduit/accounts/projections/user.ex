@@ -2,7 +2,7 @@ defmodule Conduit.Accounts.Projections.User do
   use Ecto.Schema
 
   import Ecto.Changeset
-
+  
   alias Conduit.Accounts.Projections.User
 
   schema "accounts_users" do
