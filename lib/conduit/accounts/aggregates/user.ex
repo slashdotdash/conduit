@@ -7,6 +7,7 @@ defmodule Conduit.Accounts.Aggregates.User do
   ]
 
   alias Conduit.Accounts.Aggregates.User
+  alias Conduit.Accounts.Commands.RegisterUser
 
   @doc """
   Register a new user
