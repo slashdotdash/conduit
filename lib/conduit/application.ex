@@ -7,8 +7,12 @@ defmodule Conduit.Application do
     children = [
       # Start the Ecto repository
       supervisor(Conduit.Repo, []),
+
       # Start the endpoint when the application starts
       supervisor(ConduitWeb.Endpoint, []),
+
+      # Accounts supervisor
+      supervisor(Conduit.Accounts.Supervisor, []),
     ]
 
     opts = [strategy: :one_for_one, name: Conduit.Supervisor]
