@@ -1,5 +1,7 @@
 defmodule Conduit.Accounts.Projectors.User do
-  use Commanded.Projections.Ecto, name: "Accounts.Projectors.User"
+  use Commanded.Projections.Ecto,
+    name: "Accounts.Projectors.User",
+    consistency: :strong
 
   alias Conduit.Accounts.Events.UserRegistered
   alias Conduit.Accounts.Projections.User
