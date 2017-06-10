@@ -20,4 +20,7 @@ config :logger, :console,
 config :commanded,
   event_store_adapter: Commanded.EventStore.Adapters.EventStore
 
+config :commanded_ecto_projections,
+  repo: Conduit.Repo
+
 import_config "#{Mix.env}.exs"
