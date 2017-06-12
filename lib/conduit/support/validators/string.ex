@@ -1,4 +1,4 @@
-defmodule Conduit.Validation.SringValidator do
+defmodule Conduit.Support.Validators.String do
   use Vex.Validator
 
   def validate(nil, _options), do: :ok

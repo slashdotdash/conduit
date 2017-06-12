@@ -25,8 +25,7 @@ config :commanded_ecto_projections,
 
 config :vex,
   sources: [
-    [string: Conduit.Validation.SringValidator],
-    [uuid: Conduit.Validation.UuidValidator],
+    Conduit.Support.Validators,
     Vex.Validators
   ]
 
