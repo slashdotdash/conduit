@@ -42,6 +42,7 @@ defmodule Conduit.Mixfile do
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
       {:uuid, "~> 1.1"},
+      {:vex, "~> 0.6"},
     ]
   end
 

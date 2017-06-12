@@ -23,4 +23,11 @@ config :commanded,
 config :commanded_ecto_projections,
   repo: Conduit.Repo
 
+config :vex,
+  sources: [
+    [string: Conduit.Validation.SringValidator],
+    [uuid: Conduit.Validation.UuidValidator],
+    Vex.Validators
+  ]
+
 import_config "#{Mix.env}.exs"
