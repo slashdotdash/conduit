@@ -25,6 +25,7 @@ config :commanded_ecto_projections,
 
 config :vex,
   sources: [
+    Conduit.Accounts.Validators,
     Conduit.Support.Validators,
     Vex.Validators
   ]
