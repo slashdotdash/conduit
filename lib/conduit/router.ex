@@ -3,9 +3,10 @@ defmodule Conduit.Router do
 
   alias Conduit.Accounts.Aggregates.User
   alias Conduit.Accounts.Commands.RegisterUser
-  alias Conduit.Support.Middleware.Validation
+  alias Conduit.Support.Middleware.{Uniqueness,Validate}
 
-  middleware Validation
+  middleware Validate
+  middleware Uniqueness
 
   dispatch [RegisterUser], to: User, identity: :user_uuid
 end

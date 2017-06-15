@@ -30,5 +30,12 @@ defmodule Conduit.AccountsTest do
 
       assert errors == [username: ["has already been taken"]]
     end
+
+    @tag :integration
+    test "should fail when registering identical username at same time and return error" do
+      1..2
+      |> Enum.map(fn _ -> Task.async(fn -> Accounts.register_user(build(:user)) end)  end)
+      |> Enum.map(&Task.await/1)
+    end
   end
 end

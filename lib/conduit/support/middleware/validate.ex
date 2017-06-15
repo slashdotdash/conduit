@@ -1,4 +1,4 @@
-defmodule Conduit.Support.Middleware.Validation do
+defmodule Conduit.Support.Middleware.Validate do
   @behaviour Commanded.Middleware
 
   alias Commanded.Middleware.Pipeline
@@ -19,7 +19,7 @@ defmodule Conduit.Support.Middleware.Validation do
 
     pipeline
     |> respond({:error, :validation_failure, errors})
-    |> halt
+    |> halt()
   end
 
   defp merge_errors(errors) do

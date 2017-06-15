@@ -13,6 +13,9 @@ defmodule Conduit.Application do
 
       # Accounts supervisor
       supervisor(Conduit.Accounts.Supervisor, []),
+
+      # Enforce unique constraints
+      worker(Conduit.Support.Unique, []),
     ]
 
     opts = [strategy: :one_for_one, name: Conduit.Supervisor]
