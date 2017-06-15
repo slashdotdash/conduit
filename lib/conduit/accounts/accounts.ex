@@ -4,8 +4,8 @@ defmodule Conduit.Accounts do
   """
 
   alias Conduit.Accounts.Commands.RegisterUser
-  alias Conduit.Accounts.Queries.UserByUsername
   alias Conduit.Accounts.Projections.User
+  alias Conduit.Accounts.Queries.UserByUsername
   alias Conduit.Repo
   alias Conduit.Router
 

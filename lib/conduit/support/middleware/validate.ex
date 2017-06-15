@@ -19,7 +19,7 @@ defmodule Conduit.Support.Middleware.Validate do
 
     pipeline
     |> respond({:error, :validation_failure, errors})
-    |> halt
+    |> halt()
   end
 
   defp merge_errors(errors) do
