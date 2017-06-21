@@ -5,7 +5,7 @@ defmodule Conduit.Accounts do
 
   alias Conduit.Accounts.Commands.RegisterUser
   alias Conduit.Accounts.Projections.User
-  alias Conduit.Accounts.Queries.UserByUsername
+  alias Conduit.Accounts.Queries.{UserByUsername,UserByEmail}
   alias Conduit.Repo
   alias Conduit.Router
 
@@ -20,6 +20,7 @@ defmodule Conduit.Accounts do
       |> RegisterUser.new()
       |> RegisterUser.assign_uuid(uuid)
       |> RegisterUser.downcase_username()
+      |> RegisterUser.downcase_email()
 
     with :ok <- Router.dispatch(register_user, consistency: :strong) do
       get(User, uuid)
@@ -31,10 +32,20 @@ defmodule Conduit.Accounts do
   @doc """
   Get an existing user by their username, or return `nil` if not registered
   """
-  def user_by_username(username) do
+  def user_by_username(username) when is_binary(username) do
     username
     |> String.downcase()
     |> UserByUsername.new()
+    |> Repo.one()
+  end
+
+  @doc """
+  Get an existing user by their email address, or return `nil` if not registered
+  """
+  def user_by_email(email) when is_binary(email) do
+    email
+    |> String.downcase()
+    |> UserByEmail.new()
     |> Repo.one()
   end
 
