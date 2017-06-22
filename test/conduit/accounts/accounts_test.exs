@@ -3,6 +3,7 @@ defmodule Conduit.AccountsTest do
 
   alias Conduit.Accounts
   alias Conduit.Accounts.Projections.User
+  alias Conduit.Auth
 
   describe "register user" do
     @tag :integration
@@ -11,7 +12,6 @@ defmodule Conduit.AccountsTest do
 
       assert user.username == "jake"
       assert user.email == "jake@jake.jake"
-      assert user.hashed_password == "jakejake"
       assert user.bio == nil
       assert user.image == nil
     end
@@ -79,6 +79,13 @@ defmodule Conduit.AccountsTest do
       assert {:ok, %User{} = user} = Accounts.register_user(build(:user, email: "JAKE@JAKE.JAKE"))
 
       assert user.email == "jake@jake.jake"
+    end
+
+    @tag :integration
+    test "should hash password" do
+      assert {:ok, %User{} = user} = Accounts.register_user(build(:user))
+
+      assert Auth.validate_password("jakejake", user.hashed_password)
     end
   end
 end

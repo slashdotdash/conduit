@@ -26,3 +26,5 @@ config :conduit, Conduit.Repo,
   database: "conduit_readstore_test",
   hostname: "localhost",
   pool_size: 1
+
+config :comeonin, :bcrypt_log_rounds, 4
