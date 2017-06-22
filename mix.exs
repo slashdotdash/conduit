@@ -30,6 +30,8 @@ defmodule Conduit.Mixfile do
 
   defp deps do
     [
+      {:bcrypt_elixir, "~> 1.0"},
+      {:comeonin, "~> 4.0"},
       {:commanded, "~> 0.15"},
       {:commanded_ecto_projections, "~> 0.6"},
       {:commanded_eventstore_adapter, "~> 0.3"},
