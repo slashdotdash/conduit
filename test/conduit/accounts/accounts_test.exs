@@ -20,7 +20,7 @@ defmodule Conduit.AccountsTest do
     test "should fail with invalid data and return error" do
       assert {:error, :validation_failure, errors} = Accounts.register_user(build(:user, username: ""))
 
-      assert errors == [username: ["can't be empty"]]
+      assert errors == %{username: ["can't be empty"]}
     end
 
     @tag :integration
@@ -28,7 +28,7 @@ defmodule Conduit.AccountsTest do
       assert {:ok, %User{}} = Accounts.register_user(build(:user))
       assert {:error, :validation_failure, errors} = Accounts.register_user(build(:user, email: "jake2@jake.jake"))
 
-      assert errors == [username: ["has already been taken"]]
+      assert errors == %{username: ["has already been taken"]}
     end
 
     @tag :integration
@@ -42,7 +42,7 @@ defmodule Conduit.AccountsTest do
     test "should fail when username format is invalid and return error" do
       assert {:error, :validation_failure, errors} = Accounts.register_user(build(:user, username: "j@ke"))
 
-      assert errors == [username: ["is invalid"]]
+      assert errors == %{username: ["is invalid"]}
     end
 
     @tag :integration
@@ -57,7 +57,7 @@ defmodule Conduit.AccountsTest do
       assert {:ok, %User{}} = Accounts.register_user(build(:user, username: "jake"))
       assert {:error, :validation_failure, errors} = Accounts.register_user(build(:user, username: "jake2"))
 
-      assert errors == [email: ["has already been taken"]]
+      assert errors == %{email: ["has already been taken"]}
     end
 
     @tag :integration
@@ -71,7 +71,7 @@ defmodule Conduit.AccountsTest do
     test "should fail when email address format is invalid and return error" do
       assert {:error, :validation_failure, errors} = Accounts.register_user(build(:user, email: "invalidemail"))
 
-      assert errors == [email: ["is invalid"]]
+      assert errors == %{email: ["is invalid"]}
     end
 
     @tag :integration
