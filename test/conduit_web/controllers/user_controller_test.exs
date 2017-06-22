@@ -1,8 +1,6 @@
 defmodule ConduitWeb.UserControllerTest do
   use ConduitWeb.ConnCase
 
-  import Conduit.Factory
-
   alias Conduit.Accounts
 
   def fixture(:user, attrs \\ []) do
