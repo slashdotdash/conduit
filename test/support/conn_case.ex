@@ -20,6 +20,12 @@ defmodule ConduitWeb.ConnCase do
 
       # The default endpoint for testing
       @endpoint ConduitWeb.Endpoint
+
+      alias Conduit.Accounts
+
+      def fixture(:user, attrs \\ []) do
+        build(:user, attrs) |> Accounts.register_user()
+      end
     end
   end
 

@@ -1,12 +1,6 @@
 defmodule ConduitWeb.UserControllerTest do
   use ConduitWeb.ConnCase
 
-  alias Conduit.Accounts
-
-  def fixture(:user, attrs \\ []) do
-    build(:user, attrs) |> Accounts.register_user()
-  end
-
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
