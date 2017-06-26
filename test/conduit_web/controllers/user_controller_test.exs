@@ -10,13 +10,16 @@ defmodule ConduitWeb.UserControllerTest do
     test "should create and return user when data is valid", %{conn: conn} do
       conn = post conn, user_path(conn, :create), user: build(:user)
       json = json_response(conn, 201)["user"]
+      token = json["token"]
 
       assert json == %{
         "bio" => nil,
         "email" => "jake@jake.jake",
+        "token" => token,
         "image" => nil,
         "username" => "jake",
       }
+      refute token == ""
     end
 
     @tag :web
