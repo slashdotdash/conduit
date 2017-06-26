@@ -50,6 +50,13 @@ defmodule Conduit.Accounts do
     |> Repo.one()
   end
 
+  @doc """
+  Get a single user by their UUID
+  """
+  def user_by_uuid(uuid) when is_binary(uuid) do
+    Repo.get(User, uuid)
+  end
+
   defp get(schema, uuid) do
     case Repo.get(schema, uuid) do
       nil -> {:error, :not_found}
