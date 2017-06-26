@@ -14,14 +14,17 @@ defmodule ConduitWeb.SessionControllerTest do
         email: "jake@jake.jake",
         password: "jakejake"
       }
+      json = json_response(conn, 201)["user"]
+      token = json["token"]
 
-      assert json_response(conn, 201)["user"] == %{
+      assert json == %{
         "bio" => nil,
-        "email" =>
-        "jake@jake.jake",
+        "email" => "jake@jake.jake",
+        "token" => token,
         "image" => nil,
         "username" => "jake",
       }
+      refute token == ""
     end
 
     @tag :web
