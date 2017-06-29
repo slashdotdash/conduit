@@ -3,102 +3,70 @@ defmodule Conduit.Blog do
   The boundary for the Blog system.
   """
 
-  import Ecto.Query, warn: false
-  alias Conduit.Repo
-
-  alias Conduit.Blog.Projections.Article
+  alias Conduit.Blog.Commands.{CreateAuthor,PublishArticle}
+  alias Conduit.Blog.Projections.{Article,Author}
+  alias Conduit.Blog.Queries.ArticleBySlug
+  alias Conduit.{Repo,Router}
 
   @doc """
-  Returns the list of articles.
-
-  ## Examples
-
-      iex> list_articles()
-      [%Article{}, ...]
-
+  Get the author for a given uuid.
   """
-  def list_articles do
-    Repo.all(Article)
+  def get_author!(uuid) do
+    Repo.get!(Author, uuid)
   end
 
   @doc """
-  Gets a single article.
-
-  Raises `Ecto.NoResultsError` if the Article does not exist.
-
-  ## Examples
-
-      iex> get_article!(123)
-      %Article{}
-
-      iex> get_article!(456)
-      ** (Ecto.NoResultsError)
-
+  Get an article by its URL slug, or return `nil` if not found.
   """
-  def get_article!(id), do: Repo.get!(Article, id)
-
-  @doc """
-  Creates a article.
-
-  ## Examples
-
-      iex> create_article(%{field: value})
-      {:ok, %Article{}}
-
-      iex> create_article(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_article(attrs \\ %{}) do
-    %Article{}
-    |> Article.changeset(attrs)
-    |> Repo.insert()
+  def article_by_slug(slug) do
+    slug
+    |> String.downcase()
+    |> ArticleBySlug.new()
+    |> Repo.one()
   end
 
   @doc """
-  Updates a article.
+  Create an author.
 
-  ## Examples
-
-      iex> update_article(article, %{field: new_value})
-      {:ok, %Article{}}
-
-      iex> update_article(article, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
+  An author shares the same uuid as the user, but with a different prefix.
   """
-  def update_article(%Article{} = article, attrs) do
-    article
-    |> Article.changeset(attrs)
-    |> Repo.update()
+  def create_author(%{user_uuid: uuid} = attrs) do
+    create_author =
+      attrs
+      |> CreateAuthor.new()
+      |> CreateAuthor.assign_uuid(uuid)
+
+    with :ok <- Router.dispatch(create_author, consistency: :strong) do
+      get(Author, uuid)
+    else
+      reply -> reply
+    end
   end
 
   @doc """
-  Deletes a Article.
-
-  ## Examples
-
-      iex> delete_article(article)
-      {:ok, %Article{}}
-
-      iex> delete_article(article)
-      {:error, %Ecto.Changeset{}}
-
+  Publishes an article by the given author.
   """
-  def delete_article(%Article{} = article) do
-    Repo.delete(article)
+  def publish_article(%Author{} = author, attrs \\ %{}) do
+    uuid = UUID.uuid4()
+
+    publish_article =
+      attrs
+      |> PublishArticle.new()
+      |> PublishArticle.assign_uuid(uuid)
+      |> PublishArticle.assign_author(author)
+      |> PublishArticle.generate_url_slug()
+
+    with :ok <- Router.dispatch(publish_article, consistency: :strong) do
+      get(Article, uuid)
+    else
+      reply -> reply
+    end
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking article changes.
-
-  ## Examples
-
-      iex> change_article(article)
-      %Ecto.Changeset{source: %Article{}}
-
-  """
-  def change_article(%Article{} = article) do
-    Article.changeset(article, %{})
+  defp get(schema, uuid) do
+    case Repo.get(schema, uuid) do
+      nil -> {:error, :not_found}
+      projection -> {:ok, projection}
+    end
   end
 end

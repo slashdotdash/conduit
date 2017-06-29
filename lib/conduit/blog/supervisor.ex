@@ -9,7 +9,8 @@ defmodule Conduit.Blog.Supervisor do
 
   def init(_arg) do
     Supervisor.init([
-      Blog.Workflows.CreateAuthorFromUser
+      Blog.Projectors.Article,
+      Blog.Workflows.CreateAuthorFromUser,
     ], strategy: :one_for_one)
   end
 end
