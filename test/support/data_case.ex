@@ -9,6 +9,7 @@ defmodule Conduit.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import Conduit.Factory
+      import Conduit.Fixture      
       import Conduit.DataCase
     end
   end
