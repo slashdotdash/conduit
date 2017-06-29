@@ -71,13 +71,4 @@ defmodule ConduitWeb.UserControllerTest do
       assert response(conn, 401) == ""
     end
   end
-
-  def authenticated_conn(conn) do
-    with {:ok, user} <- fixture(:user),
-         {:ok, jwt} <- ConduitWeb.JWT.generate_jwt(user)
-    do
-      conn
-      |> put_req_header("authorization", "Token " <> jwt)
-    end
-  end
 end

@@ -15,6 +15,7 @@ defmodule ConduitWeb.ConnCase do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
 
+      import ConduitWeb.ConnHelpers
       import ConduitWeb.Router.Helpers
       import Conduit.Factory
       import Conduit.Fixture
