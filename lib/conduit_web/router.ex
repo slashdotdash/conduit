@@ -10,6 +10,7 @@ defmodule ConduitWeb.Router do
   scope "/api", ConduitWeb do
     pipe_through :api
 
+    get "/articles", ArticleController, :index
     post "/articles", ArticleController, :create
     
     get "/user", UserController, :current

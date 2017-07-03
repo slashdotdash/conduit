@@ -10,9 +10,14 @@ defmodule ConduitWeb.ArticleController do
 
   action_fallback ConduitWeb.FallbackController
 
+  def index(conn, params, _user, _claims) do
+    {articles, total_count} = Blog.list_articles(params)
+    render(conn, "index.json", articles: articles, total_count: total_count)
+  end
+
   def create(conn, %{"article" => article_params}, user, _claims) do
-    author = Blog.get_author!(user.user_uuid)
-    
+    author = Blog.get_author!(user.uuid)
+
     with {:ok, %Article{} = article} <- Blog.publish_article(author, article_params) do
       conn
       |> put_status(:created)
