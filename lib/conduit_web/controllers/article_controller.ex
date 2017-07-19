@@ -17,7 +17,7 @@ defmodule ConduitWeb.ArticleController do
 
   def show(conn, %{"slug" => slug}, _user, _claims) do
     article = Blog.article_by_slug!(slug)
-    render(conn, "show.json", article: article)
+    render(conn, "show.json", article: article, favorited: false)
   end
 
   def create(conn, %{"article" => article_params}, user, _claims) do
@@ -26,7 +26,7 @@ defmodule ConduitWeb.ArticleController do
     with {:ok, %Article{} = article} <- Blog.publish_article(author, article_params) do
       conn
       |> put_status(:created)
-      |> render("show.json", article: article)
+      |> render("show.json", article: article, favorited: false)
     end
   end
 end

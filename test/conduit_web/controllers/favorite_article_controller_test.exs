@@ -27,7 +27,7 @@ defmodule ConduitWeb.FavoriteArticleControllerTest do
         "tagList" => ["dragons", "training"],
         "createdAt" => created_at,
         "updatedAt" => updated_at,
-        "favorited" => false,
+        "favorited" => true,
         "favoritesCount" => 1,
         "author" => %{
           "username" => "jake",
