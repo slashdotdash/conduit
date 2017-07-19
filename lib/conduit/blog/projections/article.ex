@@ -9,6 +9,7 @@ defmodule Conduit.Blog.Projections.Article do
     field :description, :string
     field :body, :string
     field :tags, {:array, :string}
+    field :favorited, :boolean, virtual: true, default: false
     field :favorite_count, :integer, default: 0
     field :published_at, :naive_datetime
     field :author_uuid, :binary_id

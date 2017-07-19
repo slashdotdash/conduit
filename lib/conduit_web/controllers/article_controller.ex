@@ -10,8 +10,9 @@ defmodule ConduitWeb.ArticleController do
 
   action_fallback ConduitWeb.FallbackController
 
-  def index(conn, params, _user, _claims) do
-    {articles, total_count} = Blog.list_articles(params)
+  def index(conn, params, user, _claims) do
+    author = Blog.get_author(user)
+    {articles, total_count} = Blog.list_articles(params, author)
     render(conn, "index.json", articles: articles, total_count: total_count)
   end
 

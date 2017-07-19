@@ -14,18 +14,25 @@ defmodule Conduit.AggregateCase do
       # assert that the expected events are returned when the given commands
       # have been executed
       defp assert_events(commands, expected_events) do
-        assert execute(List.wrap(commands)) == expected_events
+        assert_events(%@aggregate_module{}, commands, expected_events)
       end
 
-      # execute one or more commands against the aggregate
-      defp execute(commands) do
-        {_, events} = Enum.reduce(commands, {%@aggregate_module{}, []}, fn (command, {aggregate, _}) ->
+      defp assert_events(aggregate, commands, expected_events) do
+        {_aggregate, events} = execute(commands, aggregate)
+
+        assert List.wrap(events) == expected_events
+      end
+
+      # execute one or more commands against an aggregate
+      defp execute(commands, aggregate \\ %@aggregate_module{})
+      defp execute(commands, aggregate) do
+        commands
+        |> List.wrap()
+        |> Enum.reduce({aggregate, []}, fn (command, {aggregate, _}) ->
           events = @aggregate_module.execute(aggregate, command)
 
           {evolve(aggregate, events), events}
         end)
-
-        List.wrap(events)
       end
 
       # apply the given events to the aggregate state

@@ -23,7 +23,7 @@ defmodule ConduitWeb.ArticleView do
       createdAt: NaiveDateTime.to_iso8601(article.published_at),
       updatedAt: NaiveDateTime.to_iso8601(article.updated_at),
       favoritesCount: article.favorite_count,
-      favorited: false,
+      favorited: article.favorited,
       author: %{
         username: article.author_username,
         bio: article.author_bio,
