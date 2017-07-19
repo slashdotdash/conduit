@@ -3,8 +3,13 @@ defmodule Conduit.Blog.Projectors.Article do
     name: "Blog.Projectors.Article",
     consistency: :strong
 
-  alias Conduit.Blog.Events.{ArticlePublished,AuthorCreated}
   alias Conduit.Blog.Projections.{Article,Author}
+  alias Conduit.Blog.Events.{
+    ArticleFavorited,
+    ArticlePublished,
+    ArticleUnfavorited,
+    AuthorCreated,
+  }
   alias Conduit.Repo
 
   project %AuthorCreated{} = author do
@@ -40,10 +45,32 @@ defmodule Conduit.Blog.Projectors.Article do
     end)
   end
 
+  @doc """
+  Update favorite count when an article is favorited
+  """
+  project %ArticleFavorited{article_uuid: article_uuid, favorite_count: favorite_count}, _metadata do
+    Ecto.Multi.update_all(multi, :article, article_query(article_uuid), set: [
+      favorite_count: favorite_count,
+    ])
+  end
+
+  @doc """
+  Update favorite count when an article is unfavorited
+  """
+  project %ArticleUnfavorited{article_uuid: article_uuid, favorite_count: favorite_count}, _metadata do
+    Ecto.Multi.update_all(multi, :article, article_query(article_uuid), set: [
+      favorite_count: favorite_count,
+    ])
+  end
+
   defp get_author(uuid) do
     case Repo.get(Author, uuid) do
       nil -> {:error, :author_not_found}
       author -> {:ok, author}
     end
+  end
+
+  defp article_query(article_uuid) do
+    from(a in Article, where: a.uuid == ^article_uuid)
   end
 end
