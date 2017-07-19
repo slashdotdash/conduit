@@ -29,7 +29,7 @@ defmodule Conduit.Blog.Queries.ListArticles do
     from(a in Article)
     |> filter_by_author(options)
     |> filter_by_tag(options)
-    |> filter_by_favorited_by_user(options)
+    |> filter_favorited_by_user(options)
   end
 
   defp entries(query, %Options{limit: limit, offset: offset}, author) do
@@ -55,8 +55,8 @@ defmodule Conduit.Blog.Queries.ListArticles do
     where: fragment("? @> ?", a.tags, [^tag])
   end
 
-  defp filter_by_favorited_by_user(query, %Options{favorited: nil}), do: query
-  defp filter_by_favorited_by_user(query, %Options{favorited: favorited}) do
+  defp filter_favorited_by_user(query, %Options{favorited: nil}), do: query
+  defp filter_favorited_by_user(query, %Options{favorited: favorited}) do
     from a in query,
     join: f in FavoritedArticle, on: [article_uuid: a.uuid, favorited_by_username: ^favorited]
   end
