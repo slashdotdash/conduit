@@ -3,17 +3,23 @@ defmodule Conduit.Blog do
   The boundary for the Blog system.
   """
 
+  alias Conduit.Accounts.Projections.User
   alias Conduit.Blog.Commands.{CreateAuthor,FavoriteArticle,PublishArticle,UnfavoriteArticle}
   alias Conduit.Blog.Projections.{Article,Author}
   alias Conduit.Blog.Queries.{ArticleBySlug,ListArticles}
   alias Conduit.{Repo,Router}
 
   @doc """
-  Get the author for a given uuid.
+  Get the author for a given uuid, or raise an `Ecto.NoResultsError` if not found.
   """
-  def get_author!(uuid) do
-    Repo.get!(Author, uuid)
-  end
+  def get_author!(uuid), do: Repo.get!(Author, uuid)
+
+  @doc """
+  Get the author for a given uuid, or nil if the user is nil.
+  """
+  def get_author(nil), do: nil
+  def get_author(%User{uuid: user_uuid}), do: get_author(user_uuid)
+  def get_author(uuid) when is_bitstring(uuid), do: Repo.get(Author, uuid)
 
   @doc """
   Get an article by its URL slug, or return `nil` if not found
@@ -22,7 +28,7 @@ defmodule Conduit.Blog do
     do: article_by_slug_query(slug) |> Repo.one()
 
   @doc """
-  Get an article by its URL slug, or raise an `Ecto.NoResultsError` if not found
+  Get an article by its URL slug, or raise an `Ecto.NoResultsError` if not found.
   """
   def article_by_slug!(slug),
     do: article_by_slug_query(slug) |> Repo.one!()
@@ -32,9 +38,10 @@ defmodule Conduit.Blog do
 
   Provide tag, author or favorited query parameter to filter results.
   """
-  @spec list_articles(params :: map()) :: {articles :: list(Article.t), article_count :: non_neg_integer()}
-  def list_articles(params \\ %{}) do
-    ListArticles.paginate(params, Repo)
+  @spec list_articles(params :: map(), author :: Author.t) :: {articles :: list(Article.t), article_count :: non_neg_integer()}
+  def list_articles(params \\ %{}, author \\ nil)
+  def list_articles(params, author) do
+    ListArticles.paginate(params, author, Repo)
   end
 
   @doc """
@@ -68,7 +75,11 @@ defmodule Conduit.Blog do
       |> PublishArticle.assign_author(author)
       |> PublishArticle.generate_url_slug()
 
-    dispatch(publish_article, uuid)
+      with :ok <- Router.dispatch(publish_article, consistency: :strong) do
+        get(Article, uuid)
+      else
+        reply -> reply
+      end
   end
 
   @doc """
@@ -80,7 +91,12 @@ defmodule Conduit.Blog do
       favorited_by_author_uuid: author_uuid,
     }
 
-    dispatch(favorite_article, article_uuid)
+    with :ok <- Router.dispatch(favorite_article, consistency: :strong),
+         {:ok, article} <- get(Article, article_uuid) do
+      {:ok, %Article{article | favorited: true}}
+    else
+      reply -> reply
+    end
   end
 
   @doc """
@@ -92,12 +108,9 @@ defmodule Conduit.Blog do
       unfavorited_by_author_uuid: author_uuid,
     }
 
-    dispatch(unfavorite_article, article_uuid)
-  end
-
-  defp dispatch(command, article_uuid) do
-    with :ok <- Router.dispatch(command, consistency: :strong) do
-      get(Article, article_uuid)
+    with :ok <- Router.dispatch(unfavorite_article, consistency: :strong),
+         {:ok, article} <- get(Article, article_uuid) do
+      {:ok, %Article{article | favorited: false}}
     else
       reply -> reply
     end

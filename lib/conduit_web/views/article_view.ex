@@ -4,16 +4,16 @@ defmodule ConduitWeb.ArticleView do
 
   def render("index.json", %{articles: articles, total_count: total_count}) do
     %{
-      articles: render_many(articles, ArticleView, "article.json", %{favorited: false}),
+      articles: render_many(articles, ArticleView, "article.json"),
       articlesCount: total_count,
     }
   end
 
-  def render("show.json", %{article: article, favorited: favorited}) do
-    %{article: render_one(article, ArticleView, "article.json", %{favorited: favorited})}
+  def render("show.json", %{article: article}) do
+    %{article: render_one(article, ArticleView, "article.json")}
   end
 
-  def render("article.json", %{article: article, favorited: favorited}) do
+  def render("article.json", %{article: article}) do
     %{
       slug: article.slug,
       title: article.title,
@@ -23,7 +23,7 @@ defmodule ConduitWeb.ArticleView do
       createdAt: NaiveDateTime.to_iso8601(article.published_at),
       updatedAt: NaiveDateTime.to_iso8601(article.updated_at),
       favoritesCount: article.favorite_count,
-      favorited: favorited,
+      favorited: article.favorited,
       author: %{
         username: article.author_username,
         bio: article.author_bio,

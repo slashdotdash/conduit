@@ -17,7 +17,7 @@ defmodule ConduitWeb.FavoriteArticleController do
     with {:ok, %Article{} = article} <- Blog.favorite_article(article, author) do
       conn
       |> put_status(:created)
-      |> render(ArticleView, "show.json", article: article, favorited: true)
+      |> render(ArticleView, "show.json", article: article)
     end
   end
 
@@ -27,7 +27,7 @@ defmodule ConduitWeb.FavoriteArticleController do
     with {:ok, %Article{} = article} <- Blog.unfavorite_article(article, author) do
       conn
       |> put_status(:created)
-      |> render(ArticleView, "show.json", article: article, favorited: false)
+      |> render(ArticleView, "show.json", article: article)
     end
   end
 end
