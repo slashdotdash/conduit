@@ -6,7 +6,7 @@ defmodule Conduit.Blog do
   alias Conduit.Accounts.Projections.User
   alias Conduit.Blog.Commands.{CreateAuthor,FavoriteArticle,PublishArticle,UnfavoriteArticle}
   alias Conduit.Blog.Projections.{Article,Author}
-  alias Conduit.Blog.Queries.{ArticleBySlug,ListArticles}
+  alias Conduit.Blog.Queries.{ArticleBySlug,ListArticles,ListTags}
   alias Conduit.{Repo,Router}
 
   @doc """
@@ -42,6 +42,13 @@ defmodule Conduit.Blog do
   def list_articles(params \\ %{}, author \\ nil)
   def list_articles(params, author) do
     ListArticles.paginate(params, author, Repo)
+  end
+
+  @doc """
+  List all tags.
+  """
+  def list_tags do
+    ListTags.new() |> Repo.all() |> Enum.map(&(&1.name))
   end
 
   @doc """
