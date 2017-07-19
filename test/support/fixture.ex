@@ -52,11 +52,11 @@ defmodule Conduit.Fixture do
     ]
   end
 
-  def favorite_article(%{articles: [article | _], author: author}) do
+  def favorite_article(%{articles: [article | articles], author: author}) do
     {:ok, article} = Blog.favorite_article(article, author)
 
     [
-      article: article,
+      articles: [article | articles],
     ]
   end
 
