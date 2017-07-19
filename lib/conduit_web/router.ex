@@ -27,6 +27,8 @@ defmodule ConduitWeb.Router do
       delete "/favorite", FavoriteArticleController, :delete
     end
 
+    get "/tags", TagController, :index
+
     get "/user", UserController, :current
     post "/users/login", SessionController, :create
     post "/users", UserController, :create

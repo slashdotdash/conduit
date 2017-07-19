@@ -95,4 +95,18 @@ defmodule Conduit.BlogTest do
       assert {[], 0} == Blog.list_articles(%{favorited: "anotheruser"})
     end
   end
+
+  describe "list tags" do
+    setup [
+      :create_author,
+      :publish_articles,
+    ]
+
+    @tag :integration
+    test "should list all tags" do
+      tags = Blog.list_tags()
+
+      assert tags == ["believe", "dragons", "training"]
+    end
+  end
 end
