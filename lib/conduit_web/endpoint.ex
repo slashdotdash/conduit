@@ -34,6 +34,7 @@ defmodule ConduitWeb.Endpoint do
     key: "_conduit_key",
     signing_salt: "4gT/qM5J"
 
+  plug CORSPlug
   plug ConduitWeb.Router
 
   @doc """
