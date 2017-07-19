@@ -3,7 +3,7 @@ defmodule Conduit.Blog.Projectors.Article do
     name: "Blog.Projectors.Article",
     consistency: :strong
 
-  alias Conduit.Blog.Projections.{Article,Author}
+  alias Conduit.Blog.Projections.{Article,Author,FavoritedArticle}
   alias Conduit.Blog.Events.{
     ArticleFavorited,
     ArticlePublished,
@@ -48,8 +48,10 @@ defmodule Conduit.Blog.Projectors.Article do
   @doc """
   Update favorite count when an article is favorited
   """
-  project %ArticleFavorited{article_uuid: article_uuid, favorite_count: favorite_count}, _metadata do
-    Ecto.Multi.update_all(multi, :article, article_query(article_uuid), set: [
+  project %ArticleFavorited{article_uuid: article_uuid, favorited_by_author_uuid: favorited_by_author_uuid, favorite_count: favorite_count} do
+    multi
+    |> Ecto.Multi.insert(:favorited_article, %FavoritedArticle{article_uuid: article_uuid, favorited_by_author_uuid: favorited_by_author_uuid})
+    |> Ecto.Multi.update_all(:article, article_query(article_uuid), set: [
       favorite_count: favorite_count,
     ])
   end
@@ -57,8 +59,10 @@ defmodule Conduit.Blog.Projectors.Article do
   @doc """
   Update favorite count when an article is unfavorited
   """
-  project %ArticleUnfavorited{article_uuid: article_uuid, favorite_count: favorite_count}, _metadata do
-    Ecto.Multi.update_all(multi, :article, article_query(article_uuid), set: [
+  project %ArticleUnfavorited{article_uuid: article_uuid, unfavorited_by_author_uuid: unfavorited_by_author_uuid, favorite_count: favorite_count} do
+    multi
+    |> Ecto.Multi.delete_all(:favorited_article, favorited_article_query(article_uuid, unfavorited_by_author_uuid))
+    |> Ecto.Multi.update_all(:article, article_query(article_uuid), set: [
       favorite_count: favorite_count,
     ])
   end
@@ -72,5 +76,9 @@ defmodule Conduit.Blog.Projectors.Article do
 
   defp article_query(article_uuid) do
     from(a in Article, where: a.uuid == ^article_uuid)
+  end
+
+  defp favorited_article_query(article_uuid, author_uuid) do
+    from(f in FavoritedArticle, where: f.article_uuid == ^article_uuid and f.favorited_by_author_uuid == ^author_uuid)
   end
 end
