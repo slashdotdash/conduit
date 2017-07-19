@@ -93,6 +93,42 @@ defmodule ConduitWeb.ArticleControllerTest do
     end
   end
 
+  describe "get article" do
+    setup [
+      :create_author,
+      :publish_article,
+    ]
+
+    @tag :web
+    test "should return published article by slug", %{conn: conn} do
+      conn = get conn, article_path(conn, :show, "how-to-train-your-dragon")
+      json = json_response(conn, 200)
+      article = json["article"]
+      created_at = article["createdAt"]
+      updated_at = article["updatedAt"]
+
+      assert json == %{
+        "article" => %{
+          "slug" => "how-to-train-your-dragon",
+          "title" => "How to train your dragon",
+          "description" => "Ever wonder how?",
+          "body" => "You have to believe",
+          "tagList" => ["dragons", "training"],
+          "createdAt" => created_at,
+          "updatedAt" => updated_at,
+          "favorited" => false,
+          "favoritesCount" => 0,
+          "author" => %{
+            "username" => "jake",
+            "bio" => nil,
+            "image" => nil,
+            "following" => false,
+          }
+        },
+      }
+    end
+  end
+
   defp create_author(_context) do
     {:ok, author} = fixture(:author, user_uuid: UUID.uuid4())
 
@@ -101,10 +137,20 @@ defmodule ConduitWeb.ArticleControllerTest do
     ]
   end
 
-  defp publish_articles(%{author: author}) do
-    fixture(:article, author: author)
-    fixture(:article, author: author, title: "How to train your dragon 2", description: "So toothless", body: "It a dragon")
+  defp publish_article(%{author: author}) do
+    {:ok, article} = fixture(:article, author: author)
 
-    []
+    [
+      article: article,
+    ]
+  end
+
+  defp publish_articles(%{author: author}) do
+    {:ok, article1} = fixture(:article, author: author)
+    {:ok, article2} = fixture(:article, author: author, title: "How to train your dragon 2", description: "So toothless", body: "It a dragon")
+
+    [
+      articles: [article1, article2],
+    ]
   end
 end
