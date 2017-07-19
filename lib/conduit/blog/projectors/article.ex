@@ -46,18 +46,27 @@ defmodule Conduit.Blog.Projectors.Article do
   end
 
   @doc """
-  Update favorite count when an article is favorited
+  Favorite article for the user and update the article's favorite count
   """
   project %ArticleFavorited{article_uuid: article_uuid, favorited_by_author_uuid: favorited_by_author_uuid, favorite_count: favorite_count} do
     multi
-    |> Ecto.Multi.insert(:favorited_article, %FavoritedArticle{article_uuid: article_uuid, favorited_by_author_uuid: favorited_by_author_uuid})
+    |> Ecto.Multi.run(:author, fn _changes -> get_author(favorited_by_author_uuid) end)
+    |> Ecto.Multi.run(:favorited_article, fn %{author: author} ->
+      favorite = %FavoritedArticle{
+        article_uuid: article_uuid,
+        favorited_by_author_uuid: favorited_by_author_uuid,
+        favorited_by_username: author.username,
+      }
+
+      Repo.insert(favorite)
+    end)
     |> Ecto.Multi.update_all(:article, article_query(article_uuid), set: [
       favorite_count: favorite_count,
     ])
   end
 
   @doc """
-  Update favorite count when an article is unfavorited
+  Delete the user's favorite and update the article's favorite count
   """
   project %ArticleUnfavorited{article_uuid: article_uuid, unfavorited_by_author_uuid: unfavorited_by_author_uuid, favorite_count: favorite_count} do
     multi
