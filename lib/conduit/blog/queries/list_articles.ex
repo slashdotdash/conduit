@@ -1,7 +1,7 @@
 defmodule Conduit.Blog.Queries.ListArticles do
   import Ecto.Query
 
-  alias Conduit.Blog.Projections.Article
+  alias Conduit.Blog.Projections.{Article,Author,FavoritedArticle}
 
   defmodule Options do
     defstruct [
@@ -14,11 +14,11 @@ defmodule Conduit.Blog.Queries.ListArticles do
     use ExConstructor
   end
 
-  def paginate(params, repo) do
+  def paginate(params, author, repo) do
     options = Options.new(params)
-    query = options |> query()
+    query = query(options)
 
-    articles = query |> entries(options) |> repo.all()
+    articles = query |> entries(options, author) |> repo.all()
     total_count = query |> count() |> repo.aggregate(:count, :uuid)
 
     {articles, total_count}
@@ -30,8 +30,9 @@ defmodule Conduit.Blog.Queries.ListArticles do
     |> filter_by_tag(options)
   end
 
-  defp entries(query, %Options{limit: limit, offset: offset}) do
+  defp entries(query, %Options{limit: limit, offset: offset}, author) do
     query
+    |> include_favorited_by_author(author)
     |> order_by([a], desc: a.published_at)
     |> limit(^limit)
     |> offset(^offset)
@@ -50,5 +51,12 @@ defmodule Conduit.Blog.Queries.ListArticles do
   defp filter_by_tag(query, %Options{tag: tag}) do
     from a in query,
     where: fragment("? @> ?", a.tags, [^tag])
+  end
+
+  defp include_favorited_by_author(query, nil), do: query
+  defp include_favorited_by_author(query, %Author{uuid: author_uuid}) do
+    from a in query,
+    left_join: f in FavoritedArticle, on: [article_uuid: a.uuid, favorited_by_author_uuid: ^author_uuid],
+    select: %{a | favorited: not is_nil(f.article_uuid)}
   end
 end
