@@ -35,6 +35,7 @@ defmodule Conduit.Mixfile do
       {:commanded, "~> 0.15"},
       {:commanded_ecto_projections, "~> 0.6"},
       {:commanded_eventstore_adapter, "~> 0.3"},
+      {:cors_plug, "~> 1.4"},
       {:cowboy, "~> 1.0"},
       {:exconstructor, "~> 1.1"},
       {:ex_machina, "~> 2.1", only: :test},
