@@ -74,4 +74,25 @@ defmodule Conduit.BlogTest do
       assert {[], 0} == Blog.list_articles(%{tag: "unknown"})
     end
   end
+
+  describe "list articles favorited by user" do
+    setup [
+      :create_author,
+      :publish_articles,
+      :favorite_article,
+    ]
+
+    @tag :integration
+    test "should filter by favorited by user", %{articles: [article1, _article2]} do
+      {articles, total_count} = Blog.list_articles(%{favorited: "jake"})
+
+      assert articles == [%Article{article1 | favorited: false}]
+      assert total_count == 1
+    end
+
+    @tag :integration
+    test "should filter by favorited by user without favorites" do
+      assert {[], 0} == Blog.list_articles(%{favorited: "anotheruser"})
+    end
+  end
 end

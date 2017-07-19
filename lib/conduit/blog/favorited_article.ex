@@ -6,6 +6,7 @@ defmodule Conduit.Blog.Projections.FavoritedArticle do
   schema "blog_favorited_articles" do
     field :article_uuid, :binary_id, primary_key: true
     field :favorited_by_author_uuid, :binary_id, primary_key: true
+    field :favorited_by_username, :string
 
     timestamps()
   end
