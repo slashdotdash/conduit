@@ -74,21 +74,4 @@ defmodule Conduit.BlogTest do
       assert {[], 0} == Blog.list_articles(%{tag: "unknown"})
     end
   end
-
-  defp create_author(_context) do
-    {:ok, author} = fixture(:author, user_uuid: UUID.uuid4())
-
-    [
-      author: author,
-    ]
-  end
-
-  defp publish_articles(%{author: author}) do
-    {:ok, article1} = fixture(:article, author: author, tag_list: ["dragons", "training", "believe"])
-    {:ok, article2} = fixture(:article, author: author, title: "How to train your dragon 2", description: "So toothless", body: "It a dragon")
-
-    [
-      articles: [article1, article2],
-    ]
-  end
 end

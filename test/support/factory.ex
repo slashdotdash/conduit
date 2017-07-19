@@ -3,15 +3,17 @@ defmodule Conduit.Factory do
 
   alias Conduit.Accounts.Commands.RegisterUser
   alias Conduit.Blog.Commands.PublishArticle
+  alias Conduit.Blog.Events.ArticlePublished
 
   def article_factory do
     %{
+      article_uuid: UUID.uuid4(),
+      author_uuid: UUID.uuid4(),
       slug: "how-to-train-your-dragon",
       title: "How to train your dragon",
       description: "Ever wonder how?",
       body: "You have to believe",
-      tag_list: ["dragons", "training"],
-      author_uuid: UUID.uuid4(),
+      tag_list: ["dragons", "training"]
     }
   end
 
@@ -20,7 +22,7 @@ defmodule Conduit.Factory do
       user_uuid: UUID.uuid4(),
       username: "jake",
       bio: "I like to skateboard",
-      image: "https://i.stack.imgur.com/xHWG8.jpg",
+      image: "https://i.stack.imgur.com/xHWG8.jpg"
     }
   end
 
@@ -31,12 +33,16 @@ defmodule Conduit.Factory do
       password: "jakejake",
       hashed_password: "jakejake",
       bio: "I like to skateboard",
-      image: "https://i.stack.imgur.com/xHWG8.jpg",
+      image: "https://i.stack.imgur.com/xHWG8.jpg"
     }
   end
 
   def publish_article_factory do
     struct(PublishArticle, build(:article))
+  end
+
+  def article_published_factory do
+    struct(ArticlePublished, build(:article))
   end
 
   def register_user_factory do
