@@ -75,7 +75,7 @@ defmodule ConduitWeb.ArticleControllerTest do
             "title" => "How to train your dragon",
             "description" => "Ever wonder how?",
             "body" => "You have to believe",
-            "tagList" => ["dragons", "training"],
+            "tagList" => ["dragons", "training", "believe"],
             "createdAt" => second_created_at,
             "updatedAt" => second_updated_at,
             "favorited" => false,
@@ -127,30 +127,5 @@ defmodule ConduitWeb.ArticleControllerTest do
         },
       }
     end
-  end
-
-  defp create_author(_context) do
-    {:ok, author} = fixture(:author, user_uuid: UUID.uuid4())
-
-    [
-      author: author,
-    ]
-  end
-
-  defp publish_article(%{author: author}) do
-    {:ok, article} = fixture(:article, author: author)
-
-    [
-      article: article,
-    ]
-  end
-
-  defp publish_articles(%{author: author}) do
-    {:ok, article1} = fixture(:article, author: author)
-    {:ok, article2} = fixture(:article, author: author, title: "How to train your dragon 2", description: "So toothless", body: "It a dragon")
-
-    [
-      articles: [article1, article2],
-    ]
   end
 end

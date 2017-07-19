@@ -6,10 +6,12 @@ defmodule ConduitWeb.SessionControllerTest do
   end
 
   describe "authenticate user" do
+    setup [
+      :register_user,
+    ]
+
     @tag :web
     test "creates session and renders session when data is valid", %{conn: conn} do
-      register_user()
-
       conn = post conn, session_path(conn, :create), user: %{
         email: "jake@jake.jake",
         password: "jakejake"
@@ -29,8 +31,6 @@ defmodule ConduitWeb.SessionControllerTest do
 
     @tag :web
     test "does not create session and renders errors when password does not match", %{conn: conn} do
-      register_user()
-
       conn = post conn, session_path(conn, :create), user: %{
         email: "jake@jake.jake",
         password: "invalidpassword"
@@ -57,6 +57,4 @@ defmodule ConduitWeb.SessionControllerTest do
       }
     end
   end
-
-  defp register_user, do: fixture(:user)
 end

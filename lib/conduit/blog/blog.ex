@@ -3,7 +3,7 @@ defmodule Conduit.Blog do
   The boundary for the Blog system.
   """
 
-  alias Conduit.Blog.Commands.{CreateAuthor,PublishArticle}
+  alias Conduit.Blog.Commands.{CreateAuthor,FavoriteArticle,PublishArticle,UnfavoriteArticle}
   alias Conduit.Blog.Projections.{Article,Author}
   alias Conduit.Blog.Queries.{ArticleBySlug,ListArticles}
   alias Conduit.{Repo,Router}
@@ -68,8 +68,36 @@ defmodule Conduit.Blog do
       |> PublishArticle.assign_author(author)
       |> PublishArticle.generate_url_slug()
 
-    with :ok <- Router.dispatch(publish_article, consistency: :strong) do
-      get(Article, uuid)
+    dispatch(publish_article, uuid)
+  end
+
+  @doc """
+  Favorite the article for an author
+  """
+  def favorite_article(%Article{uuid: article_uuid}, %Author{uuid: author_uuid}) do
+    favorite_article = %FavoriteArticle{
+      article_uuid: article_uuid,
+      favorited_by_author_uuid: author_uuid,
+    }
+
+    dispatch(favorite_article, article_uuid)
+  end
+
+  @doc """
+  Unfavorite the article for an author
+  """
+  def unfavorite_article(%Article{uuid: article_uuid}, %Author{uuid: author_uuid}) do
+    unfavorite_article = %UnfavoriteArticle{
+      article_uuid: article_uuid,
+      unfavorited_by_author_uuid: author_uuid,
+    }
+
+    dispatch(unfavorite_article, article_uuid)
+  end
+
+  defp dispatch(command, article_uuid) do
+    with :ok <- Router.dispatch(command, consistency: :strong) do
+      get(Article, article_uuid)
     else
       reply -> reply
     end
