@@ -23,6 +23,10 @@ defmodule ConduitWeb.Router do
     scope "/articles/:slug" do
       pipe_through :article
 
+      get "/comments", CommentController, :index
+      post "/comments", CommentController, :create
+      delete "/comments/:uuid", CommentController, :delete
+
       post "/favorite", FavoriteArticleController, :create
       delete "/favorite", FavoriteArticleController, :delete
     end

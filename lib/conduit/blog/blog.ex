@@ -4,8 +4,8 @@ defmodule Conduit.Blog do
   """
 
   alias Conduit.Accounts.Projections.User
-  alias Conduit.Blog.Commands.{CreateAuthor,FavoriteArticle,PublishArticle,UnfavoriteArticle}
-  alias Conduit.Blog.Projections.{Article,Author}
+  alias Conduit.Blog.Commands.{FavoriteArticle,CommentOnArticle,CreateAuthor,FavoriteArticle,PublishArticle,UnfavoriteArticle}
+  alias Conduit.Blog.Projections.{Article,Author,Comment}
   alias Conduit.Blog.Queries.{ArticleBySlug,ListArticles,ListTags}
   alias Conduit.{Repo,Router}
 
@@ -82,11 +82,11 @@ defmodule Conduit.Blog do
       |> PublishArticle.assign_author(author)
       |> PublishArticle.generate_url_slug()
 
-      with :ok <- Router.dispatch(publish_article, consistency: :strong) do
-        get(Article, uuid)
-      else
-        reply -> reply
-      end
+    with :ok <- Router.dispatch(publish_article, consistency: :strong) do
+      get(Article, uuid)
+    else
+      reply -> reply
+    end
   end
 
   @doc """
@@ -118,6 +118,33 @@ defmodule Conduit.Blog do
     with :ok <- Router.dispatch(unfavorite_article, consistency: :strong),
          {:ok, article} <- get(Article, article_uuid) do
       {:ok, %Article{article | favorited: false}}
+    else
+      reply -> reply
+    end
+  end
+
+  @doc """
+  Get comments from an article
+  """
+  def article_comments(%Article{uuid: _article_uuid}) do
+    []
+  end
+
+  @doc """
+  Add a comment to an article
+  """
+  def comment_on_article(%Article{} = article, %User{} = author, attrs \\ %{}) do
+    uuid = UUID.uuid4()
+
+    comment_on_article =
+      attrs
+      |> CommentOnArticle.new()
+      |> CommentOnArticle.assign_uuid(uuid)
+      |> CommentOnArticle.assign_article(article)
+      |> CommentOnArticle.assign_author(author)
+
+    with :ok <- Router.dispatch(comment_on_article, consistency: :strong) do
+      get(Comment, uuid)
     else
       reply -> reply
     end
