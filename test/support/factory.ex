@@ -24,6 +24,14 @@ defmodule Conduit.Factory do
     }
   end
 
+  def comment_factory do
+    %{
+      body: "It takes a Jacobian",
+      article_uuid: UUID.uuid4(),
+      author_uuid: UUID.uuid4(),
+    }
+  end
+
   def user_factory do
     %{
       email: "jake@jake.jake",
