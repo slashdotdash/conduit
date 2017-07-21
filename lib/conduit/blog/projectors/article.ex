@@ -3,8 +3,9 @@ defmodule Conduit.Blog.Projectors.Article do
     name: "Blog.Projectors.Article",
     consistency: :strong
 
-  alias Conduit.Blog.Projections.{Article,Author,FavoritedArticle}
+  alias Conduit.Blog.Projections.{Article,Author,Comment,FavoritedArticle}
   alias Conduit.Blog.Events.{
+    ArticleCommented,
     ArticleFavorited,
     ArticlePublished,
     ArticleUnfavorited,
@@ -42,6 +43,25 @@ defmodule Conduit.Blog.Projectors.Article do
       }
 
       Repo.insert(article)
+    end)
+  end
+
+  project %ArticleCommented{} = commented, %{created_at: commented_at} do
+    multi
+    |> Ecto.Multi.run(:author, fn _changes -> get_author(commented.author_uuid) end)
+    |> Ecto.Multi.run(:comment, fn %{author: author} ->
+      comment = %Comment{
+        uuid: commented.comment_uuid,
+        body: commented.body,
+        article_uuid: commented.article_uuid,
+        author_uuid: author.uuid,
+        author_username: author.username,
+        author_bio: author.bio,
+        author_image: author.image,
+        commented_at: commented_at,
+      }
+
+      Repo.insert(comment)
     end)
   end
 

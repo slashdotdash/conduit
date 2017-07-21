@@ -2,7 +2,7 @@ defmodule Conduit.BlogTest do
   use Conduit.DataCase
 
   alias Conduit.Blog
-  alias Conduit.Blog.Projections.Article
+  alias Conduit.Blog.Projections.{Article,Comment}
 
   describe "publish article" do
     setup [
@@ -93,6 +93,31 @@ defmodule Conduit.BlogTest do
     @tag :integration
     test "should filter by favorited by user without favorites" do
       assert {[], 0} == Blog.list_articles(%{favorited: "anotheruser"})
+    end
+  end
+
+  describe "comment article" do
+    setup [
+      :register_user,
+      :get_author,
+      :publish_article,
+    ]
+
+    @tag :integration
+    test "should succeed with valid data", %{article: article, user: user} do
+      assert {:ok, %Comment{} = comment} = Blog.comment_on_article(article, user, build(:comment))
+
+      assert comment.body == "It takes a Jacobian"
+      assert comment.author_username == "jake"
+      assert comment.author_bio == nil
+      assert comment.author_image == nil
+    end
+
+    @tag :integration
+    test "should fail with invalid data", %{article: article, user: user} do
+      assert {:error, :validation_failure, reason} = Blog.comment_on_article(article, user, build(:comment, body: ""))
+
+      assert reason == %{body: ["can't be empty"]}
     end
   end
 
