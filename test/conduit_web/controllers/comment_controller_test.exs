@@ -1,6 +1,8 @@
 defmodule ConduitWeb.CommentControllerTest do
   use ConduitWeb.ConnCase
 
+  alias Conduit.Blog
+
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
@@ -12,7 +14,6 @@ defmodule ConduitWeb.CommentControllerTest do
       :publish_article,
     ]
 
-    @tag :wip
     @tag :web
     test "should create and return comment when data is valid", %{conn: conn, user: user} do
       conn = post authenticated_conn(conn, user), comment_path(conn, :create, "how-to-train-your-dragon"), comment: build(:comment)
@@ -75,4 +76,34 @@ defmodule ConduitWeb.CommentControllerTest do
       }
     end
   end
+
+  describe "delete comment" do
+    setup [
+      :create_author,
+      :publish_article,
+      :register_user,
+      :get_author,
+      :comment_on_article,
+    ]
+
+    @tag :web
+    test "should remove comment", %{conn: conn, comment: comment, user: user} do
+      conn = delete authenticated_conn(conn, user), comment_path(conn, :delete, "how-to-train-your-dragon", comment.uuid)
+      assert response(conn, 204) == ""
+    end
+
+    @tag :web
+    test "should not return deleted artlce comment", %{conn: conn, comment: comment, author: author} do
+      delete_comment(comment, author)
+
+      conn = get conn, comment_path(conn, :index, "how-to-train-your-dragon")
+      json = json_response(conn, 200)
+
+      assert json == %{
+        "comments" => []
+      }
+    end
+  end
+
+  defp delete_comment(comment, author), do: Blog.delete_comment(comment, author)
 end

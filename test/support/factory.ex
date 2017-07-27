@@ -2,7 +2,12 @@ defmodule Conduit.Factory do
   use ExMachina
 
   alias Conduit.Accounts.Commands.RegisterUser
-  alias Conduit.Blog.Commands.PublishArticle
+
+  alias Conduit.Blog.Commands.{
+    CommentOnArticle,
+    PublishArticle
+  }
+
   alias Conduit.Blog.Events.ArticlePublished
 
   def article_factory do
@@ -30,7 +35,7 @@ defmodule Conduit.Factory do
     %{
       body: "It takes a Jacobian",
       article_uuid: UUID.uuid4(),
-      author_uuid: UUID.uuid4(),
+      author_uuid: UUID.uuid4()
     }
   end
 
@@ -43,6 +48,10 @@ defmodule Conduit.Factory do
       bio: "I like to skateboard",
       image: "https://i.stack.imgur.com/xHWG8.jpg"
     }
+  end
+
+  def comment_on_article_factory do
+    struct(CommentOnArticle, build(:comment))
   end
 
   def publish_article_factory do

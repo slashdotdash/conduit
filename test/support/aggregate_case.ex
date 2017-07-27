@@ -17,24 +17,43 @@ defmodule Conduit.AggregateCase do
       end
 
       defp assert_events(initial_events, commands, expected_events) do
-        {_aggregate, events} =
+        {_aggregate, events, error} =
           %@aggregate_module{}
           |> evolve(initial_events)
           |> execute(commands)
 
         actual_events = List.wrap(events)
 
+        assert is_nil(error)
         assert expected_events == actual_events
+      end
+
+      defp assert_error(commands, expected_error) do
+        assert_error([], commands, expected_error)
+      end
+
+      defp assert_error(initial_events, commands, expected_error) do
+        {_aggregate, _events, error} =
+          %@aggregate_module{}
+          |> evolve(initial_events)
+          |> execute(commands)
+
+        assert error == expected_error
       end
 
       # Execute one or more commands against an aggregate
       defp execute(aggregate, commands) do
         commands
         |> List.wrap()
-        |> Enum.reduce({aggregate, []}, fn command, {aggregate, _} ->
-          events = @aggregate_module.execute(aggregate, command)
+        |> Enum.reduce({aggregate, [], nil}, fn
+          command, {aggregate, _events, nil} ->
+            case @aggregate_module.execute(aggregate, command) do
+              {:error, reason} = error -> {aggregate, nil, error}
+              events -> {evolve(aggregate, events), events, nil}
+            end
 
-          {evolve(aggregate, events), events}
+          _command, {aggregate, _events, _error} = reply ->
+            reply
         end)
       end
 
