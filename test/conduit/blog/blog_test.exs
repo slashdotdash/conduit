@@ -104,8 +104,8 @@ defmodule Conduit.BlogTest do
     ]
 
     @tag :integration
-    test "should succeed with valid data", %{article: article, user: user} do
-      assert {:ok, %Comment{} = comment} = Blog.comment_on_article(article, user, build(:comment))
+    test "should succeed with valid data", %{article: article, author: author} do
+      assert {:ok, %Comment{} = comment} = Blog.comment_on_article(article, author, build(:comment))
 
       assert comment.body == "It takes a Jacobian"
       assert comment.author_username == "jake"
@@ -114,8 +114,8 @@ defmodule Conduit.BlogTest do
     end
 
     @tag :integration
-    test "should fail with invalid data", %{article: article, user: user} do
-      assert {:error, :validation_failure, reason} = Blog.comment_on_article(article, user, build(:comment, body: ""))
+    test "should fail with invalid data", %{article: article, author: author} do
+      assert {:error, :validation_failure, reason} = Blog.comment_on_article(article, author, build(:comment, body: ""))
 
       assert reason == %{body: ["can't be empty"]}
     end

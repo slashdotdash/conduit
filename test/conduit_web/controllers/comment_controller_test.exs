@@ -12,6 +12,7 @@ defmodule ConduitWeb.CommentControllerTest do
       :publish_article,
     ]
 
+    @tag :wip
     @tag :web
     test "should create and return comment when data is valid", %{conn: conn, user: user} do
       conn = post authenticated_conn(conn, user), comment_path(conn, :create, "how-to-train-your-dragon"), comment: build(:comment)
@@ -35,6 +36,42 @@ defmodule ConduitWeb.CommentControllerTest do
           "image" => nil,
           "following" => false,
         }
+      }
+    end
+  end
+
+  describe "article comments" do
+    setup [
+      :register_user,
+      :get_author,
+      :publish_article,
+      :comment_on_article,
+    ]
+
+    @tag :web
+    test "should return all comments", %{conn: conn} do
+      conn = get conn, comment_path(conn, :index, "how-to-train-your-dragon")
+      json = json_response(conn, 200)
+      comments = json["comments"]
+      first_id = Enum.at(comments, 0)["id"]
+      first_created_at = Enum.at(comments, 0)["createdAt"]
+      first_updated_at = Enum.at(comments, 0)["updatedAt"]
+
+      assert json == %{
+        "comments" => [
+          %{
+            "id" => first_id,
+            "createdAt" => first_created_at,
+            "updatedAt" => first_updated_at,
+            "body" => "It takes a Jacobian",
+            "author" => %{
+              "username" => "jake",
+              "bio" => nil,
+              "image" => nil,
+              "following" => false,
+            }
+          },
+        ],
       }
     end
   end
