@@ -24,4 +24,13 @@ defmodule ConduitWeb.CommentController do
       |> render("show.json", comment: comment)
     end
   end
+
+  def delete(conn, %{"uuid" => comment_uuid}, user, _claims) do
+    author = Blog.get_author!(user.uuid)
+    comment = Blog.get_comment!(comment_uuid)
+
+    with :ok <- Blog.delete_comment(comment, author) do
+      send_resp(conn, :no_content, "")
+    end
+  end
 end

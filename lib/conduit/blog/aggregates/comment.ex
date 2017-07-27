@@ -1,19 +1,24 @@
 defmodule Conduit.Blog.Aggregates.Comment do
+  @behaviour Commanded.Aggregates.AggregateLifespan
+
   defstruct [
     uuid: nil,
     body: nil,
     article_uuid: nil,
     author_uuid: nil,
+    deleted?: false,
   ]
 
   alias Conduit.Blog.Aggregates.Comment
 
   alias Conduit.Blog.Commands.{
     CommentOnArticle,
+    DeleteComment,
   }
 
   alias Conduit.Blog.Events.{
     ArticleCommented,
+    CommentDeleted,
   }
 
   @doc """
@@ -28,6 +33,31 @@ defmodule Conduit.Blog.Aggregates.Comment do
     }
   end
 
+  @doc """
+  Delete a comment made by the user
+  """
+  def execute(
+    %Comment{uuid: comment_uuid, article_uuid: article_uuid, author_uuid: author_uuid, deleted?: false},
+    %DeleteComment{comment_uuid: comment_uuid, deleted_by_author_uuid: deleted_by_author_uuid})
+  do
+    case deleted_by_author_uuid do
+      ^author_uuid ->
+        %CommentDeleted{
+          comment_uuid: comment_uuid,
+          article_uuid: article_uuid,
+          author_uuid: author_uuid,
+        }
+
+      _ -> {:error, :only_comment_author_can_delete}
+    end
+  end
+
+  @doc """
+  Stop the comment aggregate after it has been deleted
+  """
+  def after_command(%DeleteComment{}), do: 0
+  def after_command(_), do: :infinity
+
   # state mutators
 
   def apply(%Comment{} = comment, %ArticleCommented{} = commented) do
@@ -36,6 +66,12 @@ defmodule Conduit.Blog.Aggregates.Comment do
       body: commented.body,
       article_uuid: commented.article_uuid,
       author_uuid: commented.author_uuid,
+    }
+  end
+
+  def apply(%Comment{} = comment, %CommentDeleted{}) do
+    %Comment{comment |
+      deleted?: true
     }
   end
 end

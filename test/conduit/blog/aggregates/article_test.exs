@@ -96,7 +96,7 @@ defmodule Conduit.Blog.ArticleTest do
     article_uuid = UUID.uuid4()
     author_uuid = UUID.uuid4()
 
-    {article, _events} = execute(build(:publish_article, article_uuid: article_uuid, author_uuid: author_uuid))
+    {article, _events, _error} = execute(build(:publish_article, article_uuid: article_uuid, author_uuid: author_uuid))
 
     [
       article: article,

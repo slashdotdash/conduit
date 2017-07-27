@@ -2,7 +2,10 @@ defmodule Conduit.Factory do
   use ExMachina
 
   alias Conduit.Accounts.Commands.RegisterUser
-  alias Conduit.Blog.Commands.PublishArticle
+  alias Conduit.Blog.Commands.{
+    CommentOnArticle,
+    PublishArticle,
+  }
 
   def article_factory do
     %{
@@ -41,6 +44,10 @@ defmodule Conduit.Factory do
       bio: "I like to skateboard",
       image: "https://i.stack.imgur.com/xHWG8.jpg",
     }
+  end
+
+  def comment_on_article_factory do
+    struct(CommentOnArticle, build(:comment))
   end
 
   def publish_article_factory do
