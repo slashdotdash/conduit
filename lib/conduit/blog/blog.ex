@@ -6,7 +6,7 @@ defmodule Conduit.Blog do
   alias Conduit.Accounts.Projections.User
   alias Conduit.Blog.Commands.{FavoriteArticle,CommentOnArticle,CreateAuthor,FavoriteArticle,PublishArticle,UnfavoriteArticle}
   alias Conduit.Blog.Projections.{Article,Author,Comment}
-  alias Conduit.Blog.Queries.{ArticleBySlug,ListArticles,ListTags}
+  alias Conduit.Blog.Queries.{ArticleBySlug,ArticleComments,ListArticles,ListTags}
   alias Conduit.{Repo,Router}
 
   @doc """
@@ -49,6 +49,15 @@ defmodule Conduit.Blog do
   """
   def list_tags do
     ListTags.new() |> Repo.all() |> Enum.map(&(&1.name))
+  end
+
+  @doc """
+  Get comments on an article.
+  """
+  def article_comments(%Article{uuid: article_uuid}) do
+    article_uuid
+    |> ArticleComments.new()
+    |> Repo.all()
   end
 
   @doc """
@@ -124,16 +133,9 @@ defmodule Conduit.Blog do
   end
 
   @doc """
-  Get comments from an article
-  """
-  def article_comments(%Article{uuid: _article_uuid}) do
-    []
-  end
-
-  @doc """
   Add a comment to an article
   """
-  def comment_on_article(%Article{} = article, %User{} = author, attrs \\ %{}) do
+  def comment_on_article(%Article{} = article, %Author{} = author, attrs \\ %{}) do
     uuid = UUID.uuid4()
 
     comment_on_article =
