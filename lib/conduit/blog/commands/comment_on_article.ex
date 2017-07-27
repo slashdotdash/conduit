@@ -9,8 +9,7 @@ defmodule Conduit.Blog.Commands.CommentOnArticle do
   use ExConstructor
   use Vex.Struct
 
-  alias Conduit.Accounts.Projections.User
-  alias Conduit.Blog.Projections.Article
+  alias Conduit.Blog.Projections.{Article,Author}
   alias Conduit.Blog.Commands.CommentOnArticle
 
   validates :comment_uuid, uuid: true
@@ -26,7 +25,7 @@ defmodule Conduit.Blog.Commands.CommentOnArticle do
     %CommentOnArticle{comment | article_uuid: article_uuid}
   end
 
-  def assign_author(%CommentOnArticle{} = comment, %User{uuid: author_uuid}) do
+  def assign_author(%CommentOnArticle{} = comment, %Author{uuid: author_uuid}) do
     %CommentOnArticle{comment | author_uuid: author_uuid}
   end
 end

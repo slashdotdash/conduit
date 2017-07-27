@@ -16,7 +16,9 @@ defmodule ConduitWeb.CommentController do
   end
 
   def create(%{assigns: %{article: article}} = conn, %{"comment" => comment_params}, user, _claims) do
-    with {:ok, %Comment{} = comment} <- Blog.comment_on_article(article, user, comment_params) do
+    author = Blog.get_author!(user.uuid)
+
+    with {:ok, %Comment{} = comment} <- Blog.comment_on_article(article, author, comment_params) do
       conn
       |> put_status(:created)
       |> render("show.json", comment: comment)

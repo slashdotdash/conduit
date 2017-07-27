@@ -68,6 +68,14 @@ defmodule Conduit.Fixture do
     ]
   end
 
+  def comment_on_article(%{article: article, author: author}) do
+    {:ok, comment} = fixture(:comment, article: article, author: author)
+
+    [
+      comment: comment,
+    ]
+  end
+
   def fixture(resource, attrs \\ [])
 
   def fixture(:author, attrs) do
@@ -82,5 +90,12 @@ defmodule Conduit.Fixture do
     {author, attrs} = Keyword.pop(attrs, :author)
 
     Blog.publish_article(author, build(:article, attrs))
+  end
+
+  def fixture(:comment, attrs) do
+    {article, attrs} = Keyword.pop(attrs, :article)
+    {author, attrs} = Keyword.pop(attrs, :author)
+
+    Blog.comment_on_article(article, author, build(:comment, attrs))
   end
 end
