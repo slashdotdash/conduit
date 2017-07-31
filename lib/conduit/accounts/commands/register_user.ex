@@ -14,6 +14,7 @@ defmodule Conduit.Accounts.Commands.RegisterUser do
   alias Conduit.Auth
 
   validates :user_uuid, uuid: true
+  
   validates :username,
     presence: [message: "can't be empty"],
     format: [with: ~r/^[a-z0-9]+$/, allow_nil: true, allow_blank: true, message: "is invalid"],
