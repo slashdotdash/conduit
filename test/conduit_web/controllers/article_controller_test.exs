@@ -1,6 +1,10 @@
 defmodule ConduitWeb.ArticleControllerTest do
   use ConduitWeb.ConnCase
 
+  alias Conduit.Blog
+  alias Conduit.Blog.Projections.Author
+  alias Conduit.Repo
+
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
@@ -188,5 +192,145 @@ defmodule ConduitWeb.ArticleControllerTest do
         },
       }
     end
+  end
+
+  describe "feed articles" do
+    setup [
+      :register_user,
+      :get_author,
+      :create_and_follow_author,
+      :publish_articles,
+    ]
+
+    @tag :web
+    test "should return published articles by date published", %{conn: conn, user: user} do
+      conn = get authenticated_conn(conn, user), article_path(conn, :feed)
+      json = json_response(conn, 200)
+      articles = json["articles"]
+      first_created_at = Enum.at(articles, 0)["createdAt"]
+      first_updated_at = Enum.at(articles, 0)["updatedAt"]
+      second_created_at = Enum.at(articles, 1)["createdAt"]
+      second_updated_at = Enum.at(articles, 1)["updatedAt"]
+
+      assert json == %{
+        "articles" => [
+          %{
+            "slug" => "how-to-train-your-dragon-2",
+            "title" => "How to train your dragon 2",
+            "description" => "So toothless",
+            "body" => "It a dragon",
+            "tagList" => ["dragons", "training"],
+            "createdAt" => first_created_at,
+            "updatedAt" => first_updated_at,
+            "favorited" => false,
+            "favoritesCount" => 0,
+            "author" => %{
+              "username" => "jane",
+              "bio" => nil,
+              "image" => nil,
+              "following" => false,
+            }
+          },
+          %{
+            "slug" => "how-to-train-your-dragon",
+            "title" => "How to train your dragon",
+            "description" => "Ever wonder how?",
+            "body" => "You have to believe",
+            "tagList" => ["dragons", "training", "believe"],
+            "createdAt" => second_created_at,
+            "updatedAt" => second_updated_at,
+            "favorited" => false,
+            "favoritesCount" => 0,
+            "author" => %{
+              "username" => "jane",
+              "bio" => nil,
+              "image" => nil,
+              "following" => false,
+            }
+          },
+        ],
+        "articlesCount" => 2,
+      }
+    end
+  end
+
+  describe "feed articles after following author" do
+    setup [
+      :create_author,
+      :publish_articles,
+      :register_user_and_follow_author,
+    ]
+
+    @tag :web
+    test "should return published articles by date published", %{conn: conn, user: user} do
+      conn = get authenticated_conn(conn, user), article_path(conn, :feed)
+      json = json_response(conn, 200)
+      articles = json["articles"]
+      first_created_at = Enum.at(articles, 0)["createdAt"]
+      first_updated_at = Enum.at(articles, 0)["updatedAt"]
+      second_created_at = Enum.at(articles, 1)["createdAt"]
+      second_updated_at = Enum.at(articles, 1)["updatedAt"]
+
+      assert json == %{
+        "articles" => [
+          %{
+            "slug" => "how-to-train-your-dragon-2",
+            "title" => "How to train your dragon 2",
+            "description" => "So toothless",
+            "body" => "It a dragon",
+            "tagList" => ["dragons", "training"],
+            "createdAt" => first_created_at,
+            "updatedAt" => first_updated_at,
+            "favorited" => false,
+            "favoritesCount" => 0,
+            "author" => %{
+              "username" => "jake",
+              "bio" => nil,
+              "image" => nil,
+              "following" => false,
+            }
+          },
+          %{
+            "slug" => "how-to-train-your-dragon",
+            "title" => "How to train your dragon",
+            "description" => "Ever wonder how?",
+            "body" => "You have to believe",
+            "tagList" => ["dragons", "training", "believe"],
+            "createdAt" => second_created_at,
+            "updatedAt" => second_updated_at,
+            "favorited" => false,
+            "favoritesCount" => 0,
+            "author" => %{
+              "username" => "jake",
+              "bio" => nil,
+              "image" => nil,
+              "following" => false,
+            }
+          },
+        ],
+        "articlesCount" => 2,
+      }
+    end
+  end
+
+  defp create_and_follow_author(%{author: follower}) do
+    {:ok, author} = fixture(:author, user_uuid: UUID.uuid4(), username: "jane")
+
+    {:ok, _author} = Blog.follow_author(author, follower)
+
+    [
+      author: author,
+    ]
+  end
+
+  defp register_user_and_follow_author(%{author: author}) do
+    {:ok, user} = fixture(:user)
+    follower = Repo.get(Author, user.uuid)
+
+    {:ok, _author} = Blog.follow_author(author, follower)
+
+    [
+      user: user,
+    ]
   end
 end

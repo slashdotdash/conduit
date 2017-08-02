@@ -17,6 +17,7 @@ defmodule ConduitWeb.Router do
     pipe_through :api
 
     get "/articles", ArticleController, :index
+    get "/articles/feed", ArticleController, :feed
     get "/articles/:slug", ArticleController, :show
     post "/articles", ArticleController, :create
 
