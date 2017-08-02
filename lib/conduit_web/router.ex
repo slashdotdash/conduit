@@ -32,6 +32,8 @@ defmodule ConduitWeb.Router do
     end
 
     get "/profiles/:username", ProfileController, :show
+    post "/profiles/:username/follow", ProfileController, :follow
+    delete "/profiles/:username/follow", ProfileController, :unfollow
 
     get "/tags", TagController, :index
 
