@@ -8,6 +8,7 @@ defmodule Conduit.Blog.Projections.Author do
     field :username, :string
     field :bio, :string
     field :image, :string
+    field :followers, {:array, :binary_id}, default: []
     field :following, :boolean, virtual: true, default: false
 
     timestamps()
