@@ -74,6 +74,30 @@ defmodule ConduitWeb.ProfileControllerTest do
     end
   end
 
+  describe "get followed author profile" do
+    setup [
+      :register_user,
+      :get_author,
+      :create_author_to_follow,
+      :follow_author,
+    ]
+
+    @tag :web
+    test "should return author profile", %{conn: conn, user: user} do
+      conn = get authenticated_conn(conn, user), profile_path(conn, :show, "jane")
+      json = json_response(conn, 200)
+
+      assert json == %{
+        "profile" => %{
+          "username" => "jane",
+          "bio" => nil,
+          "image" => nil,
+          "following" => true,
+        }
+      }
+    end
+  end
+
   defp create_author_to_follow(_context) do
     {:ok, author} = fixture(:author, user_uuid: UUID.uuid4(), username: "jane")
 
