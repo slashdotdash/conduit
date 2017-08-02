@@ -9,8 +9,10 @@ defmodule Conduit.Router do
     CommentOnArticle,
     DeleteComment,
     FavoriteArticle,
+    FollowAuthor,
     PublishArticle,
     UnfavoriteArticle,
+    UnfollowAuthor,
   }
   alias Conduit.Support.Middleware.{Uniqueness,Validate}
 
@@ -28,12 +30,16 @@ defmodule Conduit.Router do
     UnfavoriteArticle
   ], to: Article
 
-  dispatch [CreateAuthor], to: Author
+  dispatch [
+    CreateAuthor,
+    FollowAuthor,
+    UnfollowAuthor,
+  ], to: Author
 
   dispatch [
     CommentOnArticle,
     DeleteComment,
   ], to: Comment, lifespan: Comment
-  
+
   dispatch [RegisterUser], to: User
 end
