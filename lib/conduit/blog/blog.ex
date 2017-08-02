@@ -6,7 +6,7 @@ defmodule Conduit.Blog do
   alias Conduit.Accounts.Projections.User
   alias Conduit.Blog.Commands.{FavoriteArticle,FollowAuthor,CommentOnArticle,CreateAuthor,DeleteComment,FavoriteArticle,PublishArticle,UnfavoriteArticle,UnfollowAuthor}
   alias Conduit.Blog.Projections.{Article,Author,Comment}
-  alias Conduit.Blog.Queries.{ArticleBySlug,ArticleComments,ListArticles,ListTags}
+  alias Conduit.Blog.Queries.{ArticleBySlug,ArticleComments,FeedArticles,ListArticles,ListTags}
   alias Conduit.{Repo,Router}
 
   @doc """
@@ -43,7 +43,7 @@ defmodule Conduit.Blog do
     author = author_by_username!(username)
 
     %Author{author |
-      following: Enum.member?(author.followers, follower.uuid),
+      following: Enum.member?(author.followers || [], follower.uuid),
     }
   end
 
@@ -56,6 +56,14 @@ defmodule Conduit.Blog do
   def list_articles(params \\ %{}, author \\ nil)
   def list_articles(params, author) do
     ListArticles.paginate(params, author, Repo)
+  end
+
+  @doc """
+  Returns the most recent articles written by followed authors
+  """
+  @spec feed_articles(params :: map(), author :: Author.t) :: {articles :: list(Article.t), article_count :: non_neg_integer()}
+  def feed_articles(params, author) do
+    FeedArticles.paginate(params, author, Repo)
   end
 
   @doc """

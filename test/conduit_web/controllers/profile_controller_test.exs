@@ -1,8 +1,6 @@
 defmodule ConduitWeb.ProfileControllerTest do
   use ConduitWeb.ConnCase
 
-  alias Conduit.Blog
-
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
@@ -31,6 +29,7 @@ defmodule ConduitWeb.ProfileControllerTest do
   describe "follow profile" do
     setup [
       :register_user,
+      :get_author,
       :create_author_to_follow,
     ]
 
@@ -96,19 +95,5 @@ defmodule ConduitWeb.ProfileControllerTest do
         }
       }
     end
-  end
-
-  defp create_author_to_follow(_context) do
-    {:ok, author} = fixture(:author, user_uuid: UUID.uuid4(), username: "jane")
-
-    [
-      author_to_follow: author,
-    ]
-  end
-
-  defp follow_author(%{author_to_follow: author, author: follower}) do
-    {:ok, _author} = Blog.follow_author(author, follower)
-
-    []
   end
 end

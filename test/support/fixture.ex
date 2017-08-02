@@ -27,6 +27,20 @@ defmodule Conduit.Fixture do
     ]
   end
 
+  def create_author_to_follow(_context) do
+    {:ok, author} = fixture(:author, user_uuid: UUID.uuid4(), username: "jane")
+
+    [
+      author_to_follow: author,
+    ]
+  end
+
+  def follow_author(%{author_to_follow: author, author: follower}) do
+    {:ok, _author} = Blog.follow_author(author, follower)
+
+    []
+  end
+
   def publish_article(%{author: author}) do
     {:ok, article} = fixture(:article, author: author)
 
