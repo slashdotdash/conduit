@@ -11,8 +11,10 @@ defmodule ConduitWeb.ProfileController do
 
   action_fallback ConduitWeb.FallbackController
 
-  def show(conn, %{"username" => username}, _user, _claims) do
-    author = Blog.author_by_username!(username)
+  def show(conn, %{"username" => username}, user, _claims) do
+    follower = Blog.get_author(user)
+    author = Blog.author_by_username!(username, follower)
+
     render(conn, "show.json", author: author)
   end
 
