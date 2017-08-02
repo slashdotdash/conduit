@@ -9,6 +9,9 @@ config :conduit, ConduitWeb.Endpoint,
 # Print only warnings and errors during test
 config :logger, level: :warn
 
+config :ex_unit,
+  capture_log: true
+
 # Configure the event store database
 config :eventstore, EventStore.Storage,
   serializer: Commanded.Serialization.JsonSerializer,
