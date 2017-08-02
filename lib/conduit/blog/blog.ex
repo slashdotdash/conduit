@@ -4,7 +4,7 @@ defmodule Conduit.Blog do
   """
 
   alias Conduit.Accounts.Projections.User
-  alias Conduit.Blog.Commands.{FavoriteArticle,CommentOnArticle,CreateAuthor,DeleteComment,FavoriteArticle,PublishArticle,UnfavoriteArticle}
+  alias Conduit.Blog.Commands.{FavoriteArticle,FollowAuthor,CommentOnArticle,CreateAuthor,DeleteComment,FavoriteArticle,PublishArticle,UnfavoriteArticle,UnfollowAuthor}
   alias Conduit.Blog.Projections.{Article,Author,Comment}
   alias Conduit.Blog.Queries.{ArticleBySlug,ArticleComments,ListArticles,ListTags}
   alias Conduit.{Repo,Router}
@@ -83,6 +83,28 @@ defmodule Conduit.Blog do
 
     with :ok <- Router.dispatch(create_author, consistency: :strong) do
       get(Author, uuid)
+    else
+      reply -> reply
+    end
+  end
+
+  @doc """
+  Follow an author
+  """
+  def follow_author(%Author{uuid: author_uuid} = author, %Author{uuid: follower_uuid}) do
+    with :ok <- Router.dispatch(FollowAuthor.new(author_uuid: author_uuid, follower_uuid: follower_uuid)) do
+      {:ok, %Author{author | following: true}}
+    else
+      reply -> reply
+    end
+  end
+
+  @doc """
+  unfollow an author
+  """
+  def unfollow_author(%Author{uuid: author_uuid} = author, %Author{uuid: unfollower_uuid}) do
+    with :ok <- Router.dispatch(UnfollowAuthor.new(author_uuid: author_uuid, unfollower_uuid: unfollower_uuid)) do
+      {:ok, %Author{author | following: false}}
     else
       reply -> reply
     end
