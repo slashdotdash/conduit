@@ -3,11 +3,10 @@ defmodule Conduit.Accounts do
   The boundary for the Accounts system.
   """
 
-  alias Conduit.Accounts.Commands.RegisterUser
+  alias Conduit.Accounts.Commands.{RegisterUser,UpdateUser}
   alias Conduit.Accounts.Projections.User
   alias Conduit.Accounts.Queries.{UserByUsername,UserByEmail}
-  alias Conduit.Repo
-  alias Conduit.Router
+  alias Conduit.{Repo,Router}
 
   @doc """
   Register a new user.
@@ -22,9 +21,28 @@ defmodule Conduit.Accounts do
       |> RegisterUser.downcase_username()
       |> RegisterUser.downcase_email()
       |> RegisterUser.hash_password()
-      
+
     with :ok <- Router.dispatch(register_user, consistency: :strong) do
       get(User, uuid)
+    else
+      reply -> reply
+    end
+  end
+
+  @doc """
+  Update the email, username, and/or password of a user.
+  """
+  def update_user(%User{uuid: user_uuid} = user, attrs \\ %{}) do
+    update_user =
+      attrs
+      |> UpdateUser.new()
+      |> UpdateUser.assign_user(user)
+      |> UpdateUser.downcase_username()
+      |> UpdateUser.downcase_email()
+      |> UpdateUser.hash_password()
+
+    with :ok <- Router.dispatch(update_user, consistency: :strong) do
+      get(User, user_uuid)
     else
       reply -> reply
     end

@@ -14,8 +14,8 @@ defmodule ConduitWeb.UserView do
     %{
       username: user.username,
       email: user.email,
-      bio: user.bio,
-      image: user.image,
+      bio: nil,
+      image: nil,
     }
   end
 end
