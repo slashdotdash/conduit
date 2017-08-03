@@ -106,10 +106,17 @@ defmodule Conduit.Blog do
   end
 
   @doc """
+  Update the profile (bio, image) of the author
+  """
+  def update_author_profile(%Author{} = author, attrs \\ %{}) do
+    {:ok, author}
+  end
+
+  @doc """
   Follow an author
   """
   def follow_author(%Author{uuid: author_uuid} = author, %Author{uuid: follower_uuid}) do
-    with :ok <- Router.dispatch(FollowAuthor.new(author_uuid: author_uuid, follower_uuid: follower_uuid)) do
+    with :ok <- Router.dispatch(FollowAuthor.new(author_uuid: author_uuid, follower_uuid: follower_uuid), consistency: :strong) do
       {:ok, %Author{author | following: true}}
     else
       reply -> reply
@@ -120,7 +127,7 @@ defmodule Conduit.Blog do
   unfollow an author
   """
   def unfollow_author(%Author{uuid: author_uuid} = author, %Author{uuid: unfollower_uuid}) do
-    with :ok <- Router.dispatch(UnfollowAuthor.new(author_uuid: author_uuid, unfollower_uuid: unfollower_uuid)) do
+    with :ok <- Router.dispatch(UnfollowAuthor.new(author_uuid: author_uuid, unfollower_uuid: unfollower_uuid), consistency: :strong) do
       {:ok, %Author{author | following: false}}
     else
       reply -> reply

@@ -71,4 +71,27 @@ defmodule ConduitWeb.UserControllerTest do
       assert response(conn, 401) == ""
     end
   end
+
+  describe "update user" do
+    setup [
+      :register_user,
+      :get_author,
+    ]
+
+    @tag :web
+    test "should update and return user when data is valid", %{conn: conn, user: user} do
+      conn = put authenticated_conn(conn, user), user_path(conn, :update), user: [username: "jakeupdated", email: "jakeupdated@jake.jake"]
+      json = json_response(conn, 200)["user"]
+      token = json["token"]
+
+      assert json == %{
+        "bio" => nil,
+        "email" => "jakeupdated@jake.jake",
+        "token" => token,
+        "image" => nil,
+        "username" => "jakeupdated",
+      }
+      refute token == ""
+    end
+  end
 end

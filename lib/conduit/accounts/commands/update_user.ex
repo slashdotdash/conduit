@@ -1,4 +1,4 @@
-defmodule Conduit.Accounts.Commands.RegisterUser do
+defmodule Conduit.Accounts.Commands.UpdateUser do
   defstruct [
     user_uuid: "",
     username: "",
@@ -10,7 +10,8 @@ defmodule Conduit.Accounts.Commands.RegisterUser do
   use ExConstructor
   use Vex.Struct
 
-  alias Conduit.Accounts.Commands.RegisterUser
+  alias Conduit.Accounts.Commands.UpdateUser
+  alias Conduit.Accounts.Projections.User
   alias Conduit.Accounts.Validators.{UniqueEmail,UniqueUsername}
   alias Conduit.Auth
 
@@ -28,42 +29,43 @@ defmodule Conduit.Accounts.Commands.RegisterUser do
     string: true,
     by: &UniqueEmail.validate/2
 
-  validates :hashed_password, presence: [message: "can't be empty"], string: true
+  validates :hashed_password, string: [allow_nil: true, allow_blank: true]
 
   @doc """
-  Assign a unique identity for the user
+  Assign the user identity
   """
-  def assign_uuid(%RegisterUser{} = register_user, uuid) do
-    %RegisterUser{register_user | user_uuid: uuid}
+  def assign_user(%UpdateUser{} = update_user, %User{uuid: user_uuid}) do
+    %UpdateUser{update_user | user_uuid: user_uuid}
   end
 
   @doc """
   Convert username to lowercase characters
   """
-  def downcase_username(%RegisterUser{username: username} = register_user) do
-    %RegisterUser{register_user | username: String.downcase(username)}
+  def downcase_username(%UpdateUser{username: username} = update_user) do
+    %UpdateUser{update_user | username: String.downcase(username)}
   end
 
   @doc """
   Convert email address to lowercase characters
   """
-  def downcase_email(%RegisterUser{email: email} = register_user) do
-    %RegisterUser{register_user | email: String.downcase(email)}
+  def downcase_email(%UpdateUser{email: email} = update_user) do
+    %UpdateUser{update_user | email: String.downcase(email)}
   end
 
   @doc """
   Hash the password, clear the original password
   """
-  def hash_password(%RegisterUser{password: password} = register_user) do
-    %RegisterUser{register_user |
+  def hash_password(%UpdateUser{password: ""} = update_user), do: update_user
+  def hash_password(%UpdateUser{password: password} = update_user) do
+    %UpdateUser{update_user |
       password: nil,
       hashed_password: Auth.hash_password(password),
     }
   end
 end
 
-defimpl Conduit.Support.Middleware.Uniqueness.UniqueFields, for: Conduit.Accounts.Commands.RegisterUser do
-  def unique(%Conduit.Accounts.Commands.RegisterUser{user_uuid: user_uuid}), do: [
+defimpl Conduit.Support.Middleware.Uniqueness.UniqueFields, for: Conduit.Accounts.Commands.UpdateUser do
+  def unique(%Conduit.Accounts.Commands.UpdateUser{user_uuid: user_uuid}), do: [
     {:email, "has already been taken", user_uuid},
     {:username, "has already been taken", user_uuid},
   ]

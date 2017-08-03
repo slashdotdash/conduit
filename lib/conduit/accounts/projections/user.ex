@@ -7,8 +7,6 @@ defmodule Conduit.Accounts.Projections.User do
     field :username, :string, unique: true
     field :email, :string, unique: true
     field :hashed_password, :string
-    field :bio, :string
-    field :image, :string
 
     timestamps()
   end
