@@ -12,8 +12,6 @@ defmodule Conduit.AccountsTest do
 
       assert user.username == "jake"
       assert user.email == "jake@jake.jake"
-      assert user.bio == nil
-      assert user.image == nil
     end
 
     @tag :integration
@@ -86,6 +84,17 @@ defmodule Conduit.AccountsTest do
       assert {:ok, %User{} = user} = Accounts.register_user(build(:user))
 
       assert Auth.validate_password("jakejake", user.hashed_password)
+    end
+  end
+
+  describe "update user" do
+    @tag :integration
+    test "should succeed with valid data" do
+      assert {:ok, %User{} = user} = Accounts.register_user(build(:user))
+      assert {:ok, %User{} = user} = Accounts.update_user(user, username: "jakeupdated", email: "jake@jake.jake")
+
+      assert user.username == "jakeupdated"
+      assert user.email == "jake@jake.jake"
     end
   end
 end

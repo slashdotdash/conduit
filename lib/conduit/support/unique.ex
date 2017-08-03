@@ -5,19 +5,29 @@ defmodule Conduit.Support.Unique do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
 
-  def claim(context, value) do
-    GenServer.call(__MODULE__, {:claim, context, value})
+  def claim(context, owner, value) do
+    GenServer.call(__MODULE__, {:claim, context, owner, value})
   end
 
   def init(state), do: {:ok, state}
 
-  def handle_call({:claim, context, value}, _from, assignments) do
+  def handle_call({:claim, context, owner, value}, _from, assignments) do
     {reply, state} = case Map.get(assignments, context) do
-      nil -> {:ok, Map.put(assignments, context, MapSet.new([value]))}
+      nil ->
+        values = Map.new([{value, owner}])
+        {:ok, Map.put(assignments, context, values)}
+
       values ->
-        case MapSet.member?(values, value) do
-          true -> {{:error, :already_taken}, assignments}
-          false -> {:ok, Map.put(assignments, context, MapSet.put(values, value))}
+        case Map.get(values, value) do
+          ^owner ->
+            {:ok, assignments}
+
+          nil ->
+            values = Map.put(values, value, owner)
+            {:ok, Map.put(assignments, context, values)}
+
+          _ ->
+            {{:error, :already_taken}, assignments}
         end
     end
 

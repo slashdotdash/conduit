@@ -60,7 +60,7 @@ defmodule Conduit.Blog.Commands.PublishArticle do
 end
 
 defimpl Conduit.Support.Middleware.Uniqueness.UniqueFields, for: Conduit.Blog.Commands.PublishArticle do
-  def unique(_command), do: [
-    {:slug, "has already been taken"},
+  def unique(%Conduit.Blog.Commands.PublishArticle{article_uuid: article_uuid}), do: [
+    {:slug, "has already been taken", article_uuid},
   ]
 end
