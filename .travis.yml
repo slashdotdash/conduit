@@ -1,16 +1,16 @@
 language: elixir
 
 elixir:
-  - 1.5.0
+  - 1.5.2
 
 otp_release:
-  - 20.0
+  - 20.1
 
 services:
   - postgresql
 
 before_script:
-  - MIX_ENV=test mix event_store.create
+  - MIX_ENV=test mix do event_store.create, event_store.init
   - MIX_ENV=test mix do ecto.create, ecto.migrate
 
 sudo: required
