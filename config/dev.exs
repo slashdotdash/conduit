@@ -36,6 +36,9 @@ config :logger, :console, format: "[$level] $message\n"
 # in production as building large stacktraces may be expensive.
 config :phoenix, :stacktrace_depth, 20
 
+config :commanded,
+  event_store_adapter: Commanded.EventStore.Adapters.EventStore
+
 # Configure the event store database
 config :eventstore, EventStore.Storage,
   serializer: Commanded.Serialization.JsonSerializer,

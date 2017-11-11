@@ -17,13 +17,16 @@ defmodule Conduit.Mixfile do
   def application do
     [
       mod: {Conduit.Application, []},
-      extra_applications: [
-        :logger,
-        :runtime_tools,
-        :eventstore,
-      ],
+      extra_applications: extra_applications(Mix.env),
     ]
   end
+
+  defp extra_applications(:test), do: [:logger]
+  defp extra_applications(_), do: [
+    :logger,
+    :runtime_tools,
+    :eventstore,
+  ]
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_),     do: ["lib"]
@@ -34,7 +37,7 @@ defmodule Conduit.Mixfile do
       {:comeonin, "~> 4.0"},
       {:commanded, "~> 0.15"},
       {:commanded_ecto_projections, "~> 0.6"},
-      {:commanded_eventstore_adapter, "~> 0.3"},
+      {:commanded_eventstore_adapter, "~> 0.3", runtime: Mix.env != :test},
       {:cors_plug, "~> 1.4"},
       {:cowboy, "~> 1.0"},
       {:exconstructor, "~> 1.1"},
@@ -56,7 +59,7 @@ defmodule Conduit.Mixfile do
       "event_store.reset": ["event_store.drop", "event_store.create", "event_store.init"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "test": ["ecto.create --quiet", "ecto.migrate", "test"],
+      "test": ["ecto.create --quiet", "ecto.migrate", "test --no-start"],
     ]
   end
 end

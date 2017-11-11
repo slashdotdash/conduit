@@ -12,14 +12,8 @@ config :logger, level: :warn
 config :ex_unit,
   capture_log: true
 
-# Configure the event store database
-config :eventstore, EventStore.Storage,
-  serializer: Commanded.Serialization.JsonSerializer,
-  username: "postgres",
-  password: "postgres",
-  database: "conduit_eventstore_test",
-  hostname: "localhost",
-  pool_size: 1
+config :commanded,
+  event_store_adapter: Commanded.EventStore.Adapters.InMemory
 
 # Configure the read store database
 config :conduit, Conduit.Repo,
@@ -28,6 +22,7 @@ config :conduit, Conduit.Repo,
   password: "postgres",
   database: "conduit_readstore_test",
   hostname: "localhost",
+  pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 1
 
 config :comeonin, :bcrypt_log_rounds, 4

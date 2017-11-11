@@ -3,45 +3,23 @@ defmodule Conduit.Storage do
   Clear the event store and read store databases
   """
   def reset! do
-    :ok = Application.stop(:conduit)
-    :ok = Application.stop(:commanded)
-    :ok = Application.stop(:eventstore)
+    Application.stop(:conduit)
+    Application.stop(:commanded)
 
     reset_eventstore()
-    reset_readstore()
 
     {:ok, _} = Application.ensure_all_started(:conduit)
+
+    reset_readstore()
   end
 
   defp reset_eventstore do
-    {:ok, conn} =
-      EventStore.configuration()
-      |> EventStore.Config.parse()
-      |> Postgrex.start_link()
-
-    EventStore.Storage.Initializer.reset!(conn)
+    {:ok, _event_store} = Commanded.EventStore.Adapters.InMemory.start_link()
   end
 
-  defp reset_readstore do
-    readstore_config = Application.get_env(:conduit, Conduit.Repo)
+  def reset_readstore do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Conduit.Repo)
 
-    {:ok, conn} = Postgrex.start_link(readstore_config)
-
-    Postgrex.query!(conn, truncate_readstore_tables(), [])
-  end
-
-  defp truncate_readstore_tables do
-"""
-TRUNCATE TABLE
-  accounts_users,
-  blog_articles,
-  blog_authors,
-  blog_comments,
-  blog_favorited_articles,
-  blog_feed_articles,
-  blog_tags,
-  projection_versions
-RESTART IDENTITY;
-"""
+    Ecto.Adapters.SQL.Sandbox.mode(Conduit.Repo, {:shared, self()})
   end
 end

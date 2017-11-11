@@ -17,9 +17,6 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
-config :commanded,
-  event_store_adapter: Commanded.EventStore.Adapters.EventStore
-
 config :commanded_ecto_projections,
   repo: Conduit.Repo
 

@@ -59,6 +59,9 @@ config :logger, level: :info
 #     config :conduit, ConduitWeb.Endpoint, server: true
 #
 
+config :commanded,
+  event_store_adapter: Commanded.EventStore.Adapters.EventStore
+
 # Configure the event store database
 config :eventstore, EventStore.Storage,
   serializer: Commanded.Serialization.JsonSerializer,
