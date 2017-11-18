@@ -46,7 +46,7 @@ You must install the following dependencies before starting:
 3. Create the event store database:
 
     ```console
-    $ mix event_store.create
+    $ mix do event_store.create, event_store.init
     ```
 
 4. Create the read model store database:
