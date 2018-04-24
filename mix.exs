@@ -32,9 +32,9 @@ defmodule Conduit.Mixfile do
     [
       {:bcrypt_elixir, "~> 1.0"},
       {:comeonin, "~> 4.0"},
-      {:commanded, "~> 0.15"},
+      {:commanded, "0.16.0", override: true},
       {:commanded_ecto_projections, "~> 0.6"},
-      {:commanded_eventstore_adapter, "~> 0.3"},
+      {:commanded_eventstore_adapter, "0.4.0"},
       {:cors_plug, "~> 1.4"},
       {:cowboy, "~> 1.0"},
       {:exconstructor, "~> 1.1"},
