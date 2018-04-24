@@ -217,7 +217,7 @@ defmodule Conduit.Blog do
       |> DeleteComment.assign_comment(comment)
       |> DeleteComment.deleted_by(author)
 
-    Router.dispatch(delete_comment)
+    Router.dispatch(delete_comment, consistency: :strong)
   end
 
   defp get(schema, uuid) do

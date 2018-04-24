@@ -55,8 +55,8 @@ defmodule Conduit.Blog.Aggregates.Comment do
   @doc """
   Stop the comment aggregate after it has been deleted
   """
-  def after_command(%DeleteComment{}), do: 0
-  def after_command(_), do: :infinity
+  def after_event(%CommentDeleted{}), do: :stop
+  def after_event(_), do: :timer.hours(1)
 
   # state mutators
 
