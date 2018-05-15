@@ -75,6 +75,15 @@ You need to choose a front-end from those listed in the [RealWorld repo](https:/
 
 Any of these front-ends should integrate with the Conduit back-end due to their common API.
 
+## Running the tests
+
+```console
+MIX_ENV=test mix event_store.create
+MIX_ENV=test mix event_store.init
+MIX_ENV=test mix ecto.create
+MIX_ENV=test mix ecto.migrate
+mix test
+```
 ## Need help?
 
 Please [submit an issue](https://github.com/slashdotdash/conduit/issues) if you encounter a problem, or need support.
