@@ -1,5 +1,5 @@
 defmodule Conduit.Blog.Events.CommentDeleted do
-  @derive [Poison.Encoder]
+  @derive Jason.Encoder
   defstruct [
     :comment_uuid,
     :article_uuid,

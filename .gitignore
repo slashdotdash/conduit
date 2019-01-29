@@ -2,6 +2,7 @@
 /_build
 /db
 /deps
+/.elixir_ls
 /*.ez
 
 # Generated on crash by the VM

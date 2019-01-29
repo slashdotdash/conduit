@@ -5,10 +5,17 @@ defmodule ConduitWeb.ArticleController do
   alias Conduit.Blog
   alias Conduit.Blog.Projections.Article
 
-  plug Guardian.Plug.EnsureAuthenticated, %{handler: ConduitWeb.ErrorHandler} when action in [:create, :feed]
-  plug Guardian.Plug.EnsureResource, %{handler: ConduitWeb.ErrorHandler} when action in [:create, :feed]
+  plug(
+    Guardian.Plug.EnsureAuthenticated,
+    %{handler: ConduitWeb.ErrorHandler} when action in [:create, :feed]
+  )
 
-  action_fallback ConduitWeb.FallbackController
+  plug(
+    Guardian.Plug.EnsureResource,
+    %{handler: ConduitWeb.ErrorHandler} when action in [:create, :feed]
+  )
+
+  action_fallback(ConduitWeb.FallbackController)
 
   def index(conn, params, user, _claims) do
     author = Blog.get_author(user)

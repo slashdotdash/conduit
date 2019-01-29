@@ -16,7 +16,6 @@ defmodule Conduit.DataCase do
 
   setup do
     Conduit.Storage.reset!()
-
     :ok
   end
 end

@@ -1,5 +1,5 @@
 defmodule Conduit.Blog.Events.AuthorFollowed do
-  @derive [Poison.Encoder]
+  @derive Jason.Encoder
   defstruct [
     :author_uuid,
     :followed_by_author_uuid,

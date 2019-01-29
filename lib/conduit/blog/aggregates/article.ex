@@ -1,28 +1,26 @@
 defmodule Conduit.Blog.Aggregates.Article do
-  defstruct [
-    uuid: nil,
-    slug: nil,
-    title: nil,
-    description: nil,
-    body: nil,
-    tag_list: nil,
-    author_uuid: nil,
-    favorited_by_authors: MapSet.new(),
-    favorite_count: 0,
-  ]
+  defstruct uuid: nil,
+            slug: nil,
+            title: nil,
+            description: nil,
+            body: nil,
+            tag_list: nil,
+            author_uuid: nil,
+            favorited_by_authors: MapSet.new(),
+            favorite_count: 0
 
   alias Conduit.Blog.Aggregates.Article
 
   alias Conduit.Blog.Commands.{
     FavoriteArticle,
     PublishArticle,
-    UnfavoriteArticle,
+    UnfavoriteArticle
   }
 
   alias Conduit.Blog.Events.{
     ArticleFavorited,
     ArticlePublished,
-    ArticleUnfavorited,
+    ArticleUnfavorited
   }
 
   @doc """
@@ -36,7 +34,7 @@ defmodule Conduit.Blog.Aggregates.Article do
       description: publish.description,
       body: publish.body,
       tag_list: publish.tag_list,
-      author_uuid: publish.author_uuid,
+      author_uuid: publish.author_uuid
     }
   end
 
@@ -44,17 +42,20 @@ defmodule Conduit.Blog.Aggregates.Article do
   Favorite the article for an author
   """
   def execute(%Article{uuid: nil}, %FavoriteArticle{}), do: {:error, :article_not_found}
+
   def execute(
-    %Article{uuid: uuid, favorite_count: favorite_count} = article,
-    %FavoriteArticle{favorited_by_author_uuid: author_id})
-  do
+        %Article{uuid: uuid, favorite_count: favorite_count} = article,
+        %FavoriteArticle{favorited_by_author_uuid: author_id}
+      ) do
     case is_favorited?(article, author_id) do
-      true -> nil
+      true ->
+        nil
+
       false ->
         %ArticleFavorited{
           article_uuid: uuid,
           favorited_by_author_uuid: author_id,
-          favorite_count: favorite_count + 1,
+          favorite_count: favorite_count + 1
         }
     end
   end
@@ -63,52 +64,58 @@ defmodule Conduit.Blog.Aggregates.Article do
   Unfavorite the article for the user
   """
   def execute(%Article{uuid: nil}, %UnfavoriteArticle{}), do: {:error, :article_not_found}
+
   def execute(
-    %Article{uuid: uuid, favorite_count: favorite_count} = article,
-    %UnfavoriteArticle{unfavorited_by_author_uuid: author_id})
-  do
+        %Article{uuid: uuid, favorite_count: favorite_count} = article,
+        %UnfavoriteArticle{unfavorited_by_author_uuid: author_id}
+      ) do
     case is_favorited?(article, author_id) do
       true ->
         %ArticleUnfavorited{
           article_uuid: uuid,
           unfavorited_by_author_uuid: author_id,
-          favorite_count: favorite_count - 1,
+          favorite_count: favorite_count - 1
         }
-      false -> nil
+
+      false ->
+        nil
     end
   end
 
   # state mutators
 
   def apply(%Article{} = article, %ArticlePublished{} = published) do
-    %Article{article |
-      uuid: published.article_uuid,
-      slug: published.slug,
-      title: published.title,
-      description: published.description,
-      body: published.body,
-      tag_list: published.tag_list,
-      author_uuid: published.author_uuid,
+    %Article{
+      article
+      | uuid: published.article_uuid,
+        slug: published.slug,
+        title: published.title,
+        description: published.description,
+        body: published.body,
+        tag_list: published.tag_list,
+        author_uuid: published.author_uuid
     }
   end
 
   def apply(
-    %Article{favorited_by_authors: favorited_by} = article,
-    %ArticleFavorited{favorited_by_author_uuid: author_id, favorite_count: favorite_count})
-  do
-    %Article{article |
-      favorited_by_authors: MapSet.put(favorited_by, author_id),
-      favorite_count: favorite_count,
+        %Article{favorited_by_authors: favorited_by} = article,
+        %ArticleFavorited{favorited_by_author_uuid: author_id, favorite_count: favorite_count}
+      ) do
+    %Article{
+      article
+      | favorited_by_authors: MapSet.put(favorited_by, author_id),
+        favorite_count: favorite_count
     }
   end
 
   def apply(
-    %Article{favorited_by_authors: favorited_by} = article,
-    %ArticleUnfavorited{unfavorited_by_author_uuid: author_id, favorite_count: favorite_count})
-  do
-    %Article{article |
-      favorited_by_authors: MapSet.delete(favorited_by, author_id),
-      favorite_count: favorite_count,
+        %Article{favorited_by_authors: favorited_by} = article,
+        %ArticleUnfavorited{unfavorited_by_author_uuid: author_id, favorite_count: favorite_count}
+      ) do
+    %Article{
+      article
+      | favorited_by_authors: MapSet.delete(favorited_by, author_id),
+        favorite_count: favorite_count
     }
   end
 

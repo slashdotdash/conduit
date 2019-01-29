@@ -1,13 +1,13 @@
 defmodule Conduit.Fixture do
   import Conduit.Factory
 
-  alias Conduit.{Accounts,Blog}
+  alias Conduit.{Accounts, Blog}
 
   def register_user(_context) do
     {:ok, user} = fixture(:user)
 
     [
-      user: user,
+      user: user
     ]
   end
 
@@ -15,7 +15,7 @@ defmodule Conduit.Fixture do
     {:ok, author} = fixture(:author, user_uuid: user.uuid)
 
     [
-      author: author,
+      author: author
     ]
   end
 
@@ -23,7 +23,7 @@ defmodule Conduit.Fixture do
     {:ok, author} = fixture(:author, user_uuid: UUID.uuid4())
 
     [
-      author: author,
+      author: author
     ]
   end
 
@@ -31,7 +31,7 @@ defmodule Conduit.Fixture do
     {:ok, author} = fixture(:author, user_uuid: UUID.uuid4(), username: "jane")
 
     [
-      author_to_follow: author,
+      author_to_follow: author
     ]
   end
 
@@ -45,16 +45,24 @@ defmodule Conduit.Fixture do
     {:ok, article} = fixture(:article, author: author)
 
     [
-      article: article,
+      article: article
     ]
   end
 
   def publish_articles(%{author: author}) do
-    {:ok, article1} = fixture(:article, author: author, tag_list: ["dragons", "training", "believe"])
-    {:ok, article2} = fixture(:article, author: author, title: "How to train your dragon 2", description: "So toothless", body: "It a dragon")
+    {:ok, article1} =
+      fixture(:article, author: author, tag_list: ["dragons", "training", "believe"])
+
+    {:ok, article2} =
+      fixture(:article,
+        author: author,
+        title: "How to train your dragon 2",
+        description: "So toothless",
+        body: "It a dragon"
+      )
 
     [
-      articles: [article1, article2],
+      articles: [article1, article2]
     ]
   end
 
@@ -62,7 +70,7 @@ defmodule Conduit.Fixture do
     author = Blog.get_author!(user.uuid)
 
     [
-      author: author,
+      author: author
     ]
   end
 
@@ -70,7 +78,7 @@ defmodule Conduit.Fixture do
     {:ok, article} = Blog.favorite_article(article, author)
 
     [
-      articles: [article | articles],
+      articles: [article | articles]
     ]
   end
 
@@ -78,7 +86,7 @@ defmodule Conduit.Fixture do
     {:ok, article} = Blog.favorite_article(article, author)
 
     [
-      article: article,
+      article: article
     ]
   end
 
@@ -86,7 +94,7 @@ defmodule Conduit.Fixture do
     {:ok, comment} = fixture(:comment, article: article, author: author)
 
     [
-      comment: comment,
+      comment: comment
     ]
   end
 

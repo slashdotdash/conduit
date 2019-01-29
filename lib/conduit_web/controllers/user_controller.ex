@@ -7,10 +7,17 @@ defmodule ConduitWeb.UserController do
   alias Conduit.Blog
   alias Conduit.Blog.Projections.Author
 
-  action_fallback ConduitWeb.FallbackController
+  action_fallback(ConduitWeb.FallbackController)
 
-  plug Guardian.Plug.EnsureAuthenticated, %{handler: ConduitWeb.ErrorHandler} when action in [:current]
-  plug Guardian.Plug.EnsureResource, %{handler: ConduitWeb.ErrorHandler} when action in [:current]
+  plug(
+    Guardian.Plug.EnsureAuthenticated,
+    %{handler: ConduitWeb.ErrorHandler} when action in [:current]
+  )
+
+  plug(
+    Guardian.Plug.EnsureResource,
+    %{handler: ConduitWeb.ErrorHandler} when action in [:current]
+  )
 
   def create(conn, %{"user" => user_params}, _user, _claims) do
     with {:ok, %User{} = user} <- Accounts.register_user(user_params),

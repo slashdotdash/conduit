@@ -6,10 +6,17 @@ defmodule ConduitWeb.ProfileController do
   alias Conduit.Blog.Projections.Author
   alias ConduitWeb.ProfileView
 
-  plug Guardian.Plug.EnsureAuthenticated, %{handler: ConduitWeb.ErrorHandler} when action in [:follow, :unfollow]
-  plug Guardian.Plug.EnsureResource, %{handler: ConduitWeb.ErrorHandler} when action in [:follow, :unfollow]
+  plug(
+    Guardian.Plug.EnsureAuthenticated,
+    %{handler: ConduitWeb.ErrorHandler} when action in [:follow, :unfollow]
+  )
 
-  action_fallback ConduitWeb.FallbackController
+  plug(
+    Guardian.Plug.EnsureResource,
+    %{handler: ConduitWeb.ErrorHandler} when action in [:follow, :unfollow]
+  )
+
+  action_fallback(ConduitWeb.FallbackController)
 
   def show(conn, %{"username" => username}, user, _claims) do
     follower = Blog.get_author(user)
@@ -25,7 +32,8 @@ defmodule ConduitWeb.ProfileController do
     with {:ok, %Author{} = author} <- Blog.follow_author(author, follower) do
       conn
       |> put_status(:created)
-      |> render(ProfileView, "show.json", author: author)
+      |> put_view(ProfileView)
+      |> render("show.json", author: author)
     end
   end
 
@@ -36,7 +44,8 @@ defmodule ConduitWeb.ProfileController do
     with {:ok, %Author{} = author} <- Blog.unfollow_author(author, unfollower) do
       conn
       |> put_status(:created)
-      |> render(ProfileView, "show.json", author: author)
+      |> put_view(ProfileView)
+      |> render("show.json", author: author)
     end
   end
 end

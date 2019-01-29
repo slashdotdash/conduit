@@ -1,16 +1,14 @@
 use Mix.Config
 
 # General application configuration
-config :conduit,
-  ecto_repos: [Conduit.Repo]
+config :conduit, ecto_repos: [Conduit.Repo]
 
 # Configures the endpoint
 config :conduit, ConduitWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "hXslnxxJrzfI918PrmgkZZwJU3GYhT8y1500AP6Foxq9aDgjChbi0BcMdsscFkAs",
   render_errors: [view: ConduitWeb.ErrorView, accepts: ~w(json)],
-  pubsub: [name: Conduit.PubSub,
-           adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: Conduit.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
 config :logger, :console,
@@ -41,4 +39,4 @@ config :guardian, Guardian,
   secret_key: "IOjbrty1eMEBzc5aczQn0FR4Gd8P9IF1cC7tqwB7ThV/uKjS5mrResG1Y0lCzTNJ",
   serializer: Conduit.Auth.GuardianSerializer
 
-import_config "#{Mix.env}.exs"
+import_config "#{Mix.env()}.exs"

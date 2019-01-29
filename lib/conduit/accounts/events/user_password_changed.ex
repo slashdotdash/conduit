@@ -1,5 +1,5 @@
 defmodule Conduit.Accounts.Events.UserPasswordChanged do
-  @derive [Poison.Encoder]
+  @derive Jason.Encoder
   defstruct [
     :user_uuid,
     :hashed_password,

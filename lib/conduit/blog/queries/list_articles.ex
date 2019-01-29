@@ -1,16 +1,14 @@
 defmodule Conduit.Blog.Queries.ListArticles do
   import Ecto.Query
 
-  alias Conduit.Blog.Projections.{Article,Author,FavoritedArticle}
+  alias Conduit.Blog.Projections.{Article, Author, FavoritedArticle}
 
   defmodule Options do
-    defstruct [
-      author: nil,
-      favorited: nil,
-      limit: 20,
-      offset: 0,
-      tag: nil,
-    ]
+    defstruct author: nil,
+              favorited: nil,
+              limit: 20,
+              offset: 0,
+              tag: nil
 
     use ExConstructor
   end
@@ -18,10 +16,8 @@ defmodule Conduit.Blog.Queries.ListArticles do
   def paginate(params, author, repo) do
     options = Options.new(params)
     query = query(options)
-
     articles = query |> entries(options, author) |> repo.all()
     total_count = query |> count() |> repo.aggregate(:count, :uuid)
-
     {articles, total_count}
   end
 
@@ -45,26 +41,35 @@ defmodule Conduit.Blog.Queries.ListArticles do
   end
 
   defp filter_by_author(query, %Options{author: nil}), do: query
+
   defp filter_by_author(query, %Options{author: author}) do
     query |> where(author_username: ^author)
   end
 
   defp filter_by_tag(query, %Options{tag: nil}), do: query
+
   defp filter_by_tag(query, %Options{tag: tag}) do
-    from a in query,
-    where: fragment("? @> ?", a.tag_list, [^tag])
+    from(a in query,
+      where: fragment("? @> ?", a.tag_list, [^tag])
+    )
   end
 
   defp filter_favorited_by_user(query, %Options{favorited: nil}), do: query
+
   defp filter_favorited_by_user(query, %Options{favorited: favorited}) do
-    from a in query,
-    join: f in FavoritedArticle, on: [article_uuid: a.uuid, favorited_by_username: ^favorited]
+    from(a in query,
+      join: f in FavoritedArticle,
+      on: [article_uuid: a.uuid, favorited_by_username: ^favorited]
+    )
   end
 
   defp include_favorited_by_author(query, nil), do: query
+
   defp include_favorited_by_author(query, %Author{uuid: author_uuid}) do
-    from a in query,
-    left_join: f in FavoritedArticle, on: [article_uuid: a.uuid, favorited_by_author_uuid: ^author_uuid],
-    select: %{a | favorited: not is_nil(f.article_uuid)}
+    from(a in query,
+      left_join: f in FavoritedArticle,
+      on: [article_uuid: a.uuid, favorited_by_author_uuid: ^author_uuid],
+      select: %{a | favorited: not is_nil(f.article_uuid)}
+    )
   end
 end

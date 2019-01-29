@@ -2,11 +2,11 @@ defmodule Conduit.BlogTest do
   use Conduit.DataCase
 
   alias Conduit.Blog
-  alias Conduit.Blog.Projections.{Article,Comment}
+  alias Conduit.Blog.Projections.{Article, Comment}
 
   describe "publish article" do
     setup [
-      :create_author,
+      :create_author
     ]
 
     @tag :integration
@@ -36,10 +36,11 @@ defmodule Conduit.BlogTest do
   describe "list articles" do
     setup [
       :create_author,
-      :publish_articles,
+      :publish_articles
     ]
 
     @tag :integration
+
     test "should list articles by published date", %{articles: [article1, article2]} do
       assert {[article2, article1], 2} == Blog.list_articles()
     end
@@ -60,7 +61,9 @@ defmodule Conduit.BlogTest do
     end
 
     @tag :integration
-    test "should filter by author returning only their articles", %{articles: [article1, article2]} do
+    test "should filter by author returning only their articles", %{
+      articles: [article1, article2]
+    } do
       assert {[article2, article1], 2} == Blog.list_articles(%{author: "jake"})
     end
 
@@ -79,7 +82,7 @@ defmodule Conduit.BlogTest do
     setup [
       :create_author,
       :publish_articles,
-      :favorite_article,
+      :favorite_article
     ]
 
     @tag :integration
@@ -100,12 +103,13 @@ defmodule Conduit.BlogTest do
     setup [
       :register_user,
       :get_author,
-      :publish_article,
+      :publish_article
     ]
 
     @tag :integration
     test "should succeed with valid data", %{article: article, author: author} do
-      assert {:ok, %Comment{} = comment} = Blog.comment_on_article(article, author, build(:comment))
+      assert {:ok, %Comment{} = comment} =
+               Blog.comment_on_article(article, author, build(:comment))
 
       assert comment.body == "It takes a Jacobian"
       assert comment.author_username == "jake"
@@ -115,7 +119,8 @@ defmodule Conduit.BlogTest do
 
     @tag :integration
     test "should fail with invalid data", %{article: article, author: author} do
-      assert {:error, :validation_failure, reason} = Blog.comment_on_article(article, author, build(:comment, body: ""))
+      assert {:error, :validation_failure, reason} =
+               Blog.comment_on_article(article, author, build(:comment, body: ""))
 
       assert reason == %{body: ["can't be empty"]}
     end
@@ -124,7 +129,7 @@ defmodule Conduit.BlogTest do
   describe "list tags" do
     setup [
       :create_author,
-      :publish_articles,
+      :publish_articles
     ]
 
     @tag :integration
