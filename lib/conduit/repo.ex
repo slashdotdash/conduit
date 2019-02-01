@@ -1,5 +1,5 @@
 defmodule Conduit.Repo do
-  use Ecto.Repo, otp_app: :conduit
+  use Ecto.Repo, otp_app: :conduit, adapter: Ecto.Adapters.Postgres
 
   @doc """
   Dynamically loads the repository url from the

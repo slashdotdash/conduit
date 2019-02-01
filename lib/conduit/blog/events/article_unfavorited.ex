@@ -1,5 +1,5 @@
 defmodule Conduit.Blog.Events.ArticleUnfavorited do
-  @derive [Poison.Encoder]
+  @derive Jason.Encoder
   defstruct [
     :article_uuid,
     :unfavorited_by_author_uuid,

@@ -6,10 +6,17 @@ defmodule ConduitWeb.FavoriteArticleController do
   alias Conduit.Blog.Projections.Article
   alias ConduitWeb.ArticleView
 
-  plug Guardian.Plug.EnsureAuthenticated, %{handler: ConduitWeb.ErrorHandler} when action in [:create, :delete]
-  plug Guardian.Plug.EnsureResource, %{handler: ConduitWeb.ErrorHandler} when action in [:create, :delete]
+  plug(
+    Guardian.Plug.EnsureAuthenticated,
+    %{handler: ConduitWeb.ErrorHandler} when action in [:create, :delete]
+  )
 
-  action_fallback ConduitWeb.FallbackController
+  plug(
+    Guardian.Plug.EnsureResource,
+    %{handler: ConduitWeb.ErrorHandler} when action in [:create, :delete]
+  )
+
+  action_fallback(ConduitWeb.FallbackController)
 
   def create(%{assigns: %{article: article}} = conn, _params, user, _claims) do
     author = Blog.get_author!(user.uuid)
@@ -17,7 +24,8 @@ defmodule ConduitWeb.FavoriteArticleController do
     with {:ok, %Article{} = article} <- Blog.favorite_article(article, author) do
       conn
       |> put_status(:created)
-      |> render(ArticleView, "show.json", article: article)
+      |> put_view(ArticleView)
+      |> render("show.json", article: article)
     end
   end
 
@@ -27,7 +35,8 @@ defmodule ConduitWeb.FavoriteArticleController do
     with {:ok, %Article{} = article} <- Blog.unfavorite_article(article, author) do
       conn
       |> put_status(:created)
-      |> render(ArticleView, "show.json", article: article)
+      |> put_view(ArticleView)
+      |> render("show.json", article: article)
     end
   end
 end

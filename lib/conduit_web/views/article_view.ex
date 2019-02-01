@@ -5,7 +5,7 @@ defmodule ConduitWeb.ArticleView do
   def render("index.json", %{articles: articles, total_count: total_count}) do
     %{
       articles: render_many(articles, ArticleView, "article.json"),
-      articlesCount: total_count,
+      articlesCount: total_count
     }
   end
 
@@ -28,8 +28,8 @@ defmodule ConduitWeb.ArticleView do
         username: article.author_username,
         bio: article.author_bio,
         image: article.author_image,
-        following: false,
-      },
+        following: false
+      }
     }
   end
 end

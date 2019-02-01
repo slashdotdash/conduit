@@ -4,10 +4,30 @@ defmodule Conduit.Blog do
   """
 
   alias Conduit.Accounts.Projections.User
-  alias Conduit.Blog.Commands.{FavoriteArticle,FollowAuthor,CommentOnArticle,CreateAuthor,DeleteComment,FavoriteArticle,PublishArticle,UnfavoriteArticle,UnfollowAuthor}
-  alias Conduit.Blog.Projections.{Article,Author,Comment}
-  alias Conduit.Blog.Queries.{ArticleBySlug,ArticleComments,FeedArticles,ListArticles,ListTags}
-  alias Conduit.{Repo,Router}
+
+  alias Conduit.Blog.Commands.{
+    FavoriteArticle,
+    FollowAuthor,
+    CommentOnArticle,
+    CreateAuthor,
+    DeleteComment,
+    FavoriteArticle,
+    PublishArticle,
+    UnfavoriteArticle,
+    UnfollowAuthor
+  }
+
+  alias Conduit.Blog.Projections.{Article, Author, Comment}
+
+  alias Conduit.Blog.Queries.{
+    ArticleBySlug,
+    ArticleComments,
+    FeedArticles,
+    ListArticles,
+    ListTags
+  }
+
+  alias Conduit.{Repo, Router}
 
   @doc """
   Get the author for a given uuid, or raise an `Ecto.NoResultsError` if not found.
@@ -39,12 +59,11 @@ defmodule Conduit.Blog do
   """
   def author_by_username!(username, follower \\ nil)
   def author_by_username!(username, nil), do: Repo.get_by!(Author, username: username)
+
   def author_by_username!(username, follower) do
     author = author_by_username!(username)
 
-    %Author{author |
-      following: Enum.member?(author.followers || [], follower.uuid),
-    }
+    %Author{author | following: Enum.member?(author.followers || [], follower.uuid)}
   end
 
   @doc """
@@ -52,8 +71,10 @@ defmodule Conduit.Blog do
 
   Provide tag, author, or favorited query parameter to filter results.
   """
-  @spec list_articles(params :: map(), author :: Author.t) :: {articles :: list(Article.t), article_count :: non_neg_integer()}
+  @spec list_articles(params :: map(), author :: Author.t()) ::
+          {articles :: list(Article.t()), article_count :: non_neg_integer()}
   def list_articles(params \\ %{}, author \\ nil)
+
   def list_articles(params, author) do
     ListArticles.paginate(params, author, Repo)
   end
@@ -61,7 +82,8 @@ defmodule Conduit.Blog do
   @doc """
   Returns the most recent articles written by followed authors
   """
-  @spec feed_articles(params :: map(), author :: Author.t) :: {articles :: list(Article.t), article_count :: non_neg_integer()}
+  @spec feed_articles(params :: map(), author :: Author.t()) ::
+          {articles :: list(Article.t()), article_count :: non_neg_integer()}
   def feed_articles(params, author) do
     FeedArticles.paginate(params, author, Repo)
   end
@@ -70,7 +92,7 @@ defmodule Conduit.Blog do
   List all tags.
   """
   def list_tags do
-    ListTags.new() |> Repo.all() |> Enum.map(&(&1.name))
+    ListTags.new() |> Repo.all() |> Enum.map(& &1.name)
   end
 
   @doc """
@@ -108,7 +130,7 @@ defmodule Conduit.Blog do
   @doc """
   Update the profile (bio, image) of the author
   """
-  def update_author_profile(%Author{} = author, attrs \\ %{}) do
+  def update_author_profile(%Author{} = author, _attrs \\ %{}) do
     {:ok, author}
   end
 
@@ -116,7 +138,11 @@ defmodule Conduit.Blog do
   Follow an author
   """
   def follow_author(%Author{uuid: author_uuid} = author, %Author{uuid: follower_uuid}) do
-    with :ok <- Router.dispatch(FollowAuthor.new(author_uuid: author_uuid, follower_uuid: follower_uuid), consistency: :strong) do
+    with :ok <-
+           Router.dispatch(
+             FollowAuthor.new(author_uuid: author_uuid, follower_uuid: follower_uuid),
+             consistency: :strong
+           ) do
       {:ok, %Author{author | following: true}}
     else
       reply -> reply
@@ -127,7 +153,11 @@ defmodule Conduit.Blog do
   unfollow an author
   """
   def unfollow_author(%Author{uuid: author_uuid} = author, %Author{uuid: unfollower_uuid}) do
-    with :ok <- Router.dispatch(UnfollowAuthor.new(author_uuid: author_uuid, unfollower_uuid: unfollower_uuid), consistency: :strong) do
+    with :ok <-
+           Router.dispatch(
+             UnfollowAuthor.new(author_uuid: author_uuid, unfollower_uuid: unfollower_uuid),
+             consistency: :strong
+           ) do
       {:ok, %Author{author | following: false}}
     else
       reply -> reply
@@ -160,7 +190,7 @@ defmodule Conduit.Blog do
   def favorite_article(%Article{uuid: article_uuid}, %Author{uuid: author_uuid}) do
     favorite_article = %FavoriteArticle{
       article_uuid: article_uuid,
-      favorited_by_author_uuid: author_uuid,
+      favorited_by_author_uuid: author_uuid
     }
 
     with :ok <- Router.dispatch(favorite_article, consistency: :strong),
@@ -177,7 +207,7 @@ defmodule Conduit.Blog do
   def unfavorite_article(%Article{uuid: article_uuid}, %Author{uuid: author_uuid}) do
     unfavorite_article = %UnfavoriteArticle{
       article_uuid: article_uuid,
-      unfavorited_by_author_uuid: author_uuid,
+      unfavorited_by_author_uuid: author_uuid
     }
 
     with :ok <- Router.dispatch(unfavorite_article, consistency: :strong),

@@ -1,5 +1,5 @@
 defmodule Conduit.Accounts.Events.UsernameChanged do
-  @derive [Poison.Encoder]
+  @derive Jason.Encoder
   defstruct [
     :user_uuid,
     :username,

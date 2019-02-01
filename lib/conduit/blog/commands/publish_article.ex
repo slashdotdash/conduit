@@ -1,13 +1,11 @@
 defmodule Conduit.Blog.Commands.PublishArticle do
-  defstruct [
-    article_uuid: "",
-    author_uuid: "",
-    slug: "",
-    title: "",
-    description: "",
-    body: "",
-    tag_list: [],
-  ]
+  defstruct article_uuid: "",
+            author_uuid: "",
+            slug: "",
+            title: "",
+            description: "",
+            body: "",
+            tag_list: []
 
   use ExConstructor
   use Vex.Struct
@@ -16,23 +14,24 @@ defmodule Conduit.Blog.Commands.PublishArticle do
   alias Conduit.Blog.Slugger
   alias Conduit.Blog.Commands.PublishArticle
 
-  validates :article_uuid, uuid: true
+  validates(:article_uuid, uuid: true)
 
-  validates :author_uuid, uuid: true
+  validates(:author_uuid, uuid: true)
 
-  validates :slug,
+  validates(:slug,
     presence: [message: "can't be empty"],
     format: [with: ~r/^[a-z0-9\-]+$/, allow_nil: true, allow_blank: true, message: "is invalid"],
     string: true,
     unique_article_slug: true
+  )
 
-  validates :title, presence: [message: "can't be empty"], string: true
+  validates(:title, presence: [message: "can't be empty"], string: true)
 
-  validates :description, presence: [message: "can't be empty"], string: true
+  validates(:description, presence: [message: "can't be empty"], string: true)
 
-  validates :body, presence: [message: "can't be empty"], string: true
+  validates(:body, presence: [message: "can't be empty"], string: true)
 
-  validates :tag_list, by: &is_list/1
+  validates(:tag_list, by: &is_list/1)
 
   @doc """
   Assign a unique identity
@@ -59,8 +58,10 @@ defmodule Conduit.Blog.Commands.PublishArticle do
   end
 end
 
-defimpl Conduit.Support.Middleware.Uniqueness.UniqueFields, for: Conduit.Blog.Commands.PublishArticle do
-  def unique(%Conduit.Blog.Commands.PublishArticle{article_uuid: article_uuid}), do: [
-    {:slug, "has already been taken", article_uuid},
-  ]
+defimpl Conduit.Support.Middleware.Uniqueness.UniqueFields,
+  for: Conduit.Blog.Commands.PublishArticle do
+  def unique(%Conduit.Blog.Commands.PublishArticle{article_uuid: article_uuid}),
+    do: [
+      {:slug, "has already been taken", article_uuid}
+    ]
 end

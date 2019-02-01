@@ -1,5 +1,5 @@
 defmodule Conduit.Blog.Events.ArticlePublished do
-  @derive [Poison.Encoder]
+  @derive Jason.Encoder
   defstruct [
     :article_uuid,
     :author_uuid,

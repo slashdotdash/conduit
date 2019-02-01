@@ -38,6 +38,7 @@ config :phoenix, :stacktrace_depth, 20
 
 # Configure the event store database
 config :eventstore, EventStore.Storage,
+  migration_timestamps: [type: :naive_datetime_usec],
   serializer: Commanded.Serialization.JsonSerializer,
   username: "postgres",
   password: "postgres",
@@ -47,7 +48,7 @@ config :eventstore, EventStore.Storage,
 
 # Configure the read store database
 config :conduit, Conduit.Repo,
-  adapter: Ecto.Adapters.Postgres,
+  migration_timestamps: [type: :naive_datetime_usec],
   username: "postgres",
   password: "postgres",
   database: "conduit_readstore_dev",
