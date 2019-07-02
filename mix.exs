@@ -49,7 +49,7 @@ defmodule Conduit.Mixfile do
     [
       "event_store.init": ["event_store.drop", "event_store.create", "event_store.init"],
       "ecto.init": ["ecto.drop", "ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
-      # test: ["event_store.init", "ecto.init", "test"]
+      test: ["event_store.init", "ecto.init", "test"]
     ]
   end
 end
