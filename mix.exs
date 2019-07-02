@@ -29,18 +29,18 @@ defmodule Conduit.Mixfile do
       {:commanded_ecto_projections, "~> 0.8"},
       {:commanded_eventstore_adapter, "~> 0.5"},
       {:cors_plug, "~> 1.4"},
+      {:elixir_uuid, "~> 1.2"},
       {:plug_cowboy, "~> 1.0"},
       {:exconstructor, "~> 1.1"},
       {:ex_machina, "~> 2.1", only: :test},
       {:gettext, "~> 0.11"},
-      {:guardian, "~> 0.14"},
+      {:guardian, "~> 1.2"},
       {:jason, "~> 1.1"},
       {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
       {:phoenix, "~> 1.4"},
       {:phoenix_ecto, "~> 4.0"},
       {:postgrex, ">= 0.0.0"},
       {:slugger, "~> 0.2"},
-      {:uuid, "~> 1.1"},
       {:vex, "~> 0.6"}
     ]
   end
@@ -49,7 +49,7 @@ defmodule Conduit.Mixfile do
     [
       "event_store.init": ["event_store.drop", "event_store.create", "event_store.init"],
       "ecto.init": ["ecto.drop", "ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
-      test: ["event_store.init", "ecto.init", "test"]
+      # test: ["event_store.init", "ecto.init", "test"]
     ]
   end
 end

@@ -5,8 +5,13 @@ defmodule ConduitWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+
+    plug Guardian.Plug.Pipeline,
+      error_handler: ConduitWeb.ErrorHandler,
+      module: Conduit.Auth.Guardian
+
     plug Guardian.Plug.VerifyHeader, realm: "Token"
-    plug Guardian.Plug.LoadResource
+    plug Guardian.Plug.LoadResource, allow_blank: true
   end
 
   pipeline :article do

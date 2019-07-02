@@ -12,8 +12,6 @@ defmodule Conduit.Auth do
   def authenticate(email, password) do
     with {:ok, user} <- user_by_email(email) do
       check_password(user, password)
-   else
-     reply -> reply
    end
   end
 

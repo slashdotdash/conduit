@@ -21,6 +21,8 @@ config :commanded,
 config :commanded_ecto_projections,
   repo: Conduit.Repo
 
+config :phoenix, :json_library, Jason
+
 config :vex,
   sources: [
     Conduit.Accounts.Validators,
@@ -29,14 +31,13 @@ config :vex,
     Vex.Validators
   ]
 
-config :guardian, Guardian,
+config :conduit, Conduit.Auth.Guardian,
   allowed_algos: ["HS512"],
   verify_module: Guardian.JWT,
   issuer: "Conduit",
   ttl: {30, :days},
   allowed_drift: 2000,
   verify_issuer: true,
-  secret_key: "IOjbrty1eMEBzc5aczQn0FR4Gd8P9IF1cC7tqwB7ThV/uKjS5mrResG1Y0lCzTNJ",
-  serializer: Conduit.Auth.GuardianSerializer
+  secret_key: "IOjbrty1eMEBzc5aczQn0FR4Gd8P9IF1cC7tqwB7ThV/uKjS5mrResG1Y0lCzTNJ"
 
 import_config "#{Mix.env()}.exs"

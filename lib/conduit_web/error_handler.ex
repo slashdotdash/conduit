@@ -1,6 +1,11 @@
 defmodule ConduitWeb.ErrorHandler do
   import Plug.Conn
 
+  @behaviour Guardian.Plug.ErrorHandler
+
+  @impl Guardian.Plug.ErrorHandler
+  def auth_error(conn, {_type, _reason}, _opts), do: respond_with(conn, :unauthorized)
+
   @doc """
   Return 401 for "Unauthorized" requests
 

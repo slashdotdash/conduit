@@ -1,21 +1,20 @@
 defmodule ConduitWeb.CommentController do
   use ConduitWeb, :controller
-  use Guardian.Phoenix.Controller
 
   alias Conduit.Blog
   alias Conduit.Blog.Projections.Comment
 
-  plug Guardian.Plug.EnsureAuthenticated, %{handler: ConduitWeb.ErrorHandler} when action in [:create, :delete]
-  plug Guardian.Plug.EnsureResource, %{handler: ConduitWeb.ErrorHandler} when action in [:create, :delete]
+  plug(Guardian.Plug.EnsureAuthenticated when action in [:create, :delete])
 
-  action_fallback ConduitWeb.FallbackController
+  action_fallback(ConduitWeb.FallbackController)
 
-  def index(%{assigns: %{article: article}} = conn, _params, _user, _claims) do
+  def index(%{assigns: %{article: article}} = conn, _params) do
     comments = Blog.article_comments(article)
     render(conn, "index.json", comments: comments)
   end
 
-  def create(%{assigns: %{article: article}} = conn, %{"comment" => comment_params}, user, _claims) do
+  def create(%{assigns: %{article: article}} = conn, %{"comment" => comment_params}) do
+    user = Guardian.Plug.current_resource(conn)
     author = Blog.get_author!(user.uuid)
 
     with {:ok, %Comment{} = comment} <- Blog.comment_on_article(article, author, comment_params) do
@@ -25,7 +24,8 @@ defmodule ConduitWeb.CommentController do
     end
   end
 
-  def delete(conn, %{"uuid" => comment_uuid}, user, _claims) do
+  def delete(conn, %{"uuid" => comment_uuid}) do
+    user = Guardian.Plug.current_resource(conn)
     author = Blog.get_author!(user.uuid)
     comment = Blog.get_comment!(comment_uuid)
 
