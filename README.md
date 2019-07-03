@@ -18,14 +18,14 @@ MIT License
 
 ## Getting started
 
-Conduit is an Elixir 1.5 application using Phoenix 1.3 and PostgreSQL for persistence.
+Conduit is an Elixir application using Phoenix 1.4 and PostgreSQL for persistence.
 
 ### Prerequisites
 
 You must install the following dependencies before starting:
 
 - [Git](https://git-scm.com/).
-- [Elixir](https://elixir-lang.org/install.html) (v1.5 or later).
+- [Elixir](https://elixir-lang.org/install.html) (v1.6 or later).
 - [PostgreSQL](https://www.postgresql.org/) database (v9.5 or later).
 
 ### Configuring Conduit
