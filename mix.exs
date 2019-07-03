@@ -25,9 +25,10 @@ defmodule Conduit.Mixfile do
     [
       {:bcrypt_elixir, "~> 1.0"},
       {:comeonin, "~> 4.0"},
-      {:commanded, "~> 0.18"},
+      {:commanded, "~> 0.19"},
       {:commanded_ecto_projections, "~> 0.8"},
-      {:commanded_eventstore_adapter, "~> 0.5"},
+      {:commanded_eventstore_adapter, "~> 0.6"},
+      {:eventstore, "~> 0.17"},
       {:cors_plug, "~> 1.4"},
       {:elixir_uuid, "~> 1.2"},
       {:plug_cowboy, "~> 1.0"},
@@ -49,7 +50,8 @@ defmodule Conduit.Mixfile do
     [
       "event_store.init": ["event_store.drop", "event_store.create", "event_store.init"],
       "ecto.init": ["ecto.drop", "ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
-      test: ["event_store.init", "ecto.init", "test"]
+      reset: ["event_store.init", "ecto.init"],
+      test: ["reset", "test"]
     ]
   end
 end
