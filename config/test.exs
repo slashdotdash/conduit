@@ -14,7 +14,6 @@ config :ex_unit,
 
 # Configure the event store database
 config :eventstore, EventStore.Storage,
-  migration_timestamps: [type: :naive_datetime_usec],
   serializer: Commanded.Serialization.JsonSerializer,
   username: "postgres",
   password: "postgres",
@@ -24,7 +23,7 @@ config :eventstore, EventStore.Storage,
 
 # Configure the read store database
 config :conduit, Conduit.Repo,
-  migration_timestamps: [type: :naive_datetime_usec],
+  migration_timestamps: [type: :utc_datetime_usec],
   username: "postgres",
   password: "postgres",
   database: "conduit_readstore_test",

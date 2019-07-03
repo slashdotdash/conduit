@@ -10,7 +10,7 @@ defmodule Conduit.Repo.Migrations.CreateConduit.Blog.Article do
       add(:body, :text)
       add(:tag_list, {:array, :text})
       add(:favorite_count, :integer)
-      add(:published_at, :naive_datetime_usec)
+      add(:published_at, :utc_datetime_usec)
       add(:author_uuid, :uuid)
       add(:author_username, :text)
       add(:author_bio, :text)

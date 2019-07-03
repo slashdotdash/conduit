@@ -6,7 +6,7 @@ defmodule Conduit.Repo.Migrations.CreateFeedArticle do
       add(:article_uuid, :uuid, primary_key: true)
       add(:follower_uuid, :uuid, primary_key: true)
       add(:author_uuid, :uuid)
-      add(:published_at, :naive_datetime_usec)
+      add(:published_at, :utc_datetime_usec)
 
       timestamps()
     end

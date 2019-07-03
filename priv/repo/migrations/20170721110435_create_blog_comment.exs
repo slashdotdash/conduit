@@ -10,7 +10,7 @@ defmodule Conduit.Repo.Migrations.CreateBlogComment do
       add(:author_username, :text)
       add(:author_bio, :text)
       add(:author_image, :text)
-      add(:commented_at, :naive_datetime_usec)
+      add(:commented_at, :utc_datetime_usec)
 
       timestamps()
     end
