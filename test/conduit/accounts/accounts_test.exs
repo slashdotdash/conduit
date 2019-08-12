@@ -31,9 +31,16 @@ defmodule Conduit.AccountsTest do
 
     @tag :integration
     test "should fail when registering identical username at same time and return error" do
-      1..2
-      |> Enum.map(fn x -> Task.async(fn -> Accounts.register_user(build(:user, email: "jake#{x}@jake.jake")) end) end)
-      |> Enum.map(&Task.await/1)
+      [success, failure] =
+        1..2
+        |> Enum.map(fn x -> Task.async(fn -> Accounts.register_user(build(:user, email: "jake#{x}@jake.jake")) end) end)
+        |> Enum.map(&Task.await/1)
+        |> Enum.sort()
+
+      assert {:ok, %User{}} = success
+      assert {:error, :validation_failure, errors} = failure
+
+      assert errors == %{username: ["has already been taken"]}
     end
 
     @tag :integration
@@ -60,9 +67,16 @@ defmodule Conduit.AccountsTest do
 
     @tag :integration
     test "should fail when registering identical email addresses at same time and return error" do
-      1..2
-      |> Enum.map(fn x -> Task.async(fn -> Accounts.register_user(build(:user, username: "user#{x}")) end) end)
-      |> Enum.map(&Task.await/1)
+      [success, failure] =
+        1..2
+        |> Enum.map(fn x -> Task.async(fn -> Accounts.register_user(build(:user, username: "user#{x}")) end) end)
+        |> Enum.map(&Task.await/1)
+        |> Enum.sort()
+
+      assert {:ok, %User{}} = success
+      assert {:error, :validation_failure, errors} = failure
+
+      assert errors == %{email: ["has already been taken"]}
     end
 
     @tag :integration
