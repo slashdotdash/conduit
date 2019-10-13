@@ -1,7 +1,17 @@
 use Mix.Config
 
 # General application configuration
-config :conduit, ecto_repos: [Conduit.Repo]
+config :conduit,
+  ecto_repos: [Conduit.Repo],
+  event_stores: [Conduit.EventStore]
+
+config :conduit, Conduit.App,
+  event_store: [
+    adapter: Commanded.EventStore.Adapters.EventStore,
+    event_store: Conduit.EventStore
+  ],
+  pub_sub: :local,
+  registry: :local
 
 # Configures the endpoint
 config :conduit, ConduitWeb.Endpoint,

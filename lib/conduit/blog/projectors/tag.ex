@@ -1,5 +1,6 @@
 defmodule Conduit.Blog.Projectors.Tag do
   use Commanded.Projections.Ecto,
+    application: Conduit.App,
     name: "Blog.Projectors.Tag",
     consistency: :eventual
 

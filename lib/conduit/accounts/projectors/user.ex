@@ -1,5 +1,6 @@
 defmodule Conduit.Accounts.Projectors.User do
   use Commanded.Projections.Ecto,
+    application: Conduit.App,
     name: "Accounts.Projectors.User",
     consistency: :strong
 

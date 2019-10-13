@@ -12,8 +12,8 @@ config :logger, level: :warn
 config :ex_unit,
   capture_log: true
 
-# Configure the event store database
-config :eventstore, EventStore.Storage,
+# Configures the event store database
+config :conduit, Conduit.EventStore,
   serializer: Commanded.Serialization.JsonSerializer,
   username: "postgres",
   password: "postgres",
@@ -21,7 +21,7 @@ config :eventstore, EventStore.Storage,
   hostname: "localhost",
   pool_size: 1
 
-# Configure the read store database
+# Configures the read store database
 config :conduit, Conduit.Repo,
   migration_timestamps: [type: :utc_datetime_usec],
   username: "postgres",
