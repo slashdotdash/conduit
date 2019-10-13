@@ -3,10 +3,11 @@ defmodule Conduit.Accounts do
   The boundary for the Accounts system.
   """
 
-  alias Conduit.Accounts.Commands.{RegisterUser,UpdateUser}
+  alias Conduit.Accounts.Commands.{RegisterUser, UpdateUser}
   alias Conduit.Accounts.Projections.User
-  alias Conduit.Accounts.Queries.{UserByUsername,UserByEmail}
-  alias Conduit.{Repo,Router}
+  alias Conduit.Accounts.Queries.{UserByUsername, UserByEmail}
+  alias Conduit.App
+  alias Conduit.Repo
 
   @doc """
   Register a new user.
@@ -22,10 +23,8 @@ defmodule Conduit.Accounts do
       |> RegisterUser.downcase_email()
       |> RegisterUser.hash_password()
 
-    with :ok <- Router.dispatch(register_user, consistency: :strong) do
+    with :ok <- App.dispatch(register_user, consistency: :strong) do
       get(User, uuid)
-    else
-      reply -> reply
     end
   end
 
@@ -41,10 +40,8 @@ defmodule Conduit.Accounts do
       |> UpdateUser.downcase_email()
       |> UpdateUser.hash_password()
 
-    with :ok <- Router.dispatch(update_user, consistency: :strong) do
+    with :ok <- App.dispatch(update_user, consistency: :strong) do
       get(User, user_uuid)
-    else
-      reply -> reply
     end
   end
 

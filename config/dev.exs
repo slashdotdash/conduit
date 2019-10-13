@@ -36,8 +36,8 @@ config :logger, :console, format: "[$level] $message\n"
 # in production as building large stacktraces may be expensive.
 config :phoenix, :stacktrace_depth, 20
 
-# Configure the event store database
-config :eventstore, EventStore.Storage,
+# Configures the event store database
+config :conduit, Conduit.EventStore,
   serializer: Commanded.Serialization.JsonSerializer,
   username: "postgres",
   password: "postgres",
@@ -45,7 +45,7 @@ config :eventstore, EventStore.Storage,
   hostname: "localhost",
   pool_size: 10
 
-# Configure the read store database
+# Configures the read store database
 config :conduit, Conduit.Repo,
   migration_timestamps: [type: :utc_datetime_usec],
   username: "postgres",

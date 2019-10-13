@@ -2,23 +2,24 @@ defmodule Conduit.Application do
   use Application
 
   def start(_type, _args) do
-    import Supervisor.Spec
-
     children = [
+      # Commanded application
+      Conduit.App,
+
       # Start the Ecto repository
-      supervisor(Conduit.Repo, []),
+      Conduit.Repo,
 
       # Start the endpoint when the application starts
-      supervisor(ConduitWeb.Endpoint, []),
+      ConduitWeb.Endpoint,
 
       # Accounts supervisor
-      supervisor(Conduit.Accounts.Supervisor, []),
+      Conduit.Accounts.Supervisor,
 
       # Blog supervisor
-      supervisor(Conduit.Blog.Supervisor, []),
+      Conduit.Blog.Supervisor,
 
       # Enforce unique constraints
-      worker(Conduit.Support.Unique, []),
+      Conduit.Support.Unique
     ]
 
     opts = [strategy: :one_for_one, name: Conduit.Supervisor]
