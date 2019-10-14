@@ -28,7 +28,7 @@ defmodule Conduit.Mixfile do
       {:commanded, github: "commanded/commanded"},
       {:commanded_ecto_projections, github: "commanded/commanded-ecto-projections"},
       {:commanded_eventstore_adapter, github: "commanded/commanded-eventstore-adapter"},
-      {:eventstore, github: "commanded/eventstore"},
+      {:eventstore, "~> 1.0.0-rc.0", override: true},
       {:cors_plug, "~> 1.4"},
       {:elixir_uuid, "~> 1.2"},
       {:plug_cowboy, "~> 1.0"},
