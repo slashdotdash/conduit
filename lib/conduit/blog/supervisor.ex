@@ -12,6 +12,7 @@ defmodule Conduit.Blog.Supervisor do
       [
         Blog.Projectors.Article,
         Blog.Projectors.Tag,
+        Conduit.Blog.Process.UnpublishPost,
         Blog.Workflows.CreateAuthorFromUser
       ],
       strategy: :one_for_one
