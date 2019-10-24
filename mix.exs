@@ -25,7 +25,7 @@ defmodule Conduit.Mixfile do
     [
       {:bcrypt_elixir, "~> 1.0"},
       {:comeonin, "~> 4.0"},
-      {:commanded, "~> 1.0.0-rc.0"},
+      {:commanded, "~> 1.0.0-rc.1"},
       {:commanded_ecto_projections, "~> 1.0.0-rc.0"},
       {:commanded_eventstore_adapter, "~> 1.0.0-rc.0"},
       {:eventstore, "~> 1.0.0-rc.0"},
