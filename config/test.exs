@@ -30,4 +30,4 @@ config :conduit, Conduit.Repo,
   hostname: "localhost",
   pool_size: 1
 
-config :comeonin, :bcrypt_log_rounds, 4
+config :bcrypt_elixir, :log_rounds, 4
