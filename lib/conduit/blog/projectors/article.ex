@@ -1,5 +1,6 @@
 defmodule Conduit.Blog.Projectors.Article do
   use Commanded.Projections.Ecto,
+    application: Conduit.App,
     name: "Blog.Projectors.Article",
     consistency: :strong
 

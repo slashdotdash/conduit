@@ -12,7 +12,7 @@ This book is for anyone who has an interest in CQRS/ES and Elixir. It demonstrat
 
 MIT License
 
-[![Build Status](https://travis-ci.org/slashdotdash/conduit.svg?branch=master)](https://travis-ci.org/slashdotdash/conduit)
+[![Build Status](https://travis-ci.com/slashdotdash/conduit.svg?branch=master)](https://travis-ci.com/slashdotdash/conduit)
 
 ---
 

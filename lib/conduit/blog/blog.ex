@@ -4,6 +4,7 @@ defmodule Conduit.Blog do
   """
 
   alias Conduit.Accounts.Projections.User
+  alias Conduit.App
 
   alias Conduit.Blog.Commands.{
     FavoriteArticle,
@@ -27,7 +28,7 @@ defmodule Conduit.Blog do
     ListTags
   }
 
-  alias Conduit.{Repo, Router}
+  alias Conduit.Repo
 
   @doc """
   Get the author for a given uuid, or raise an `Ecto.NoResultsError` if not found.
@@ -120,7 +121,7 @@ defmodule Conduit.Blog do
       |> CreateAuthor.new()
       |> CreateAuthor.assign_uuid(uuid)
 
-    with :ok <- Router.dispatch(create_author, consistency: :strong) do
+    with :ok <- App.dispatch(create_author, consistency: :strong) do
       get(Author, uuid)
     else
       reply -> reply
@@ -139,7 +140,7 @@ defmodule Conduit.Blog do
   """
   def follow_author(%Author{uuid: author_uuid} = author, %Author{uuid: follower_uuid}) do
     with :ok <-
-           Router.dispatch(
+           App.dispatch(
              FollowAuthor.new(author_uuid: author_uuid, follower_uuid: follower_uuid),
              consistency: :strong
            ) do
@@ -154,7 +155,7 @@ defmodule Conduit.Blog do
   """
   def unfollow_author(%Author{uuid: author_uuid} = author, %Author{uuid: unfollower_uuid}) do
     with :ok <-
-           Router.dispatch(
+           App.dispatch(
              UnfollowAuthor.new(author_uuid: author_uuid, unfollower_uuid: unfollower_uuid),
              consistency: :strong
            ) do
@@ -177,7 +178,7 @@ defmodule Conduit.Blog do
       |> PublishArticle.assign_author(author)
       |> PublishArticle.generate_url_slug()
 
-    with :ok <- Router.dispatch(publish_article, consistency: :strong) do
+    with :ok <- App.dispatch(publish_article, consistency: :strong) do
       get(Article, uuid)
     else
       reply -> reply
@@ -193,7 +194,7 @@ defmodule Conduit.Blog do
       favorited_by_author_uuid: author_uuid
     }
 
-    with :ok <- Router.dispatch(favorite_article, consistency: :strong),
+    with :ok <- App.dispatch(favorite_article, consistency: :strong),
          {:ok, article} <- get(Article, article_uuid) do
       {:ok, %Article{article | favorited: true}}
     else
@@ -210,7 +211,7 @@ defmodule Conduit.Blog do
       unfavorited_by_author_uuid: author_uuid
     }
 
-    with :ok <- Router.dispatch(unfavorite_article, consistency: :strong),
+    with :ok <- App.dispatch(unfavorite_article, consistency: :strong),
          {:ok, article} <- get(Article, article_uuid) do
       {:ok, %Article{article | favorited: false}}
     else
@@ -231,7 +232,7 @@ defmodule Conduit.Blog do
       |> CommentOnArticle.assign_article(article)
       |> CommentOnArticle.assign_author(author)
 
-    with :ok <- Router.dispatch(comment_on_article, consistency: :strong) do
+    with :ok <- App.dispatch(comment_on_article, consistency: :strong) do
       get(Comment, uuid)
     else
       reply -> reply
@@ -247,7 +248,7 @@ defmodule Conduit.Blog do
       |> DeleteComment.assign_comment(comment)
       |> DeleteComment.deleted_by(author)
 
-    Router.dispatch(delete_comment, consistency: :strong)
+    App.dispatch(delete_comment, consistency: :strong)
   end
 
   defp get(schema, uuid) do
