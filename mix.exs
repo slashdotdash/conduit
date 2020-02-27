@@ -40,6 +40,7 @@ defmodule Conduit.Mixfile do
       {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
       {:phoenix, "~> 1.4"},
       {:phoenix_ecto, "~> 4.0"},
+      {:phoenix_pubsub, "~> 1.1"},
       {:postgrex, ">= 0.0.0"},
       {:slugger, "~> 0.2"},
       {:vex, "~> 0.6"}

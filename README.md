@@ -84,6 +84,27 @@ MIX_ENV=test mix ecto.create
 MIX_ENV=test mix ecto.migrate
 mix test
 ```
+
+### Running on a cluster of nodes
+
+To run Conduit on a cluster you need to start three terminals and run the following commands on each:
+
+```console
+PORT=4000 iex --name node1@127.0.0.1 --erl "-config cluster/node1.sys.config" -S mix phx.server
+```
+
+```console
+PORT=4001 iex --name node2@127.0.0.1 --erl "-config cluster/node2.sys.config" -S mix phx.server
+```
+
+```console
+PORT=4002 iex --name node3@127.0.0.1 --erl "-config cluster/node3.sys.config" -S mix phx.server
+```
+
+This will run Phoenix on each of the local nodes, running on ports 4000, 4001, and 4002 respectively. You can connect a front-end to *any* of the backends. The Conduit aggregates, event handlers, and process managers will be distributed amongst all available nodes.
+
+The config specifies that at least two nodes are required at a minimum to form a quorum. So you can stop/start any one node and the remaining two nodes will continue to serve requests. Fewer than two connected nodes will stop the application as it cannot form a quorum.
+
 ## Need help?
 
 Please [submit an issue](https://github.com/slashdotdash/conduit/issues) if you encounter a problem, or need support.

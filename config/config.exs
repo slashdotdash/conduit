@@ -10,8 +10,15 @@ config :conduit, Conduit.App,
     adapter: Commanded.EventStore.Adapters.EventStore,
     event_store: Conduit.EventStore
   ],
-  pub_sub: :local,
-  registry: :local
+  pubsub: [
+    phoenix_pubsub: [
+      adapter: Phoenix.PubSub.PG2,
+      pool_size: 1
+    ]
+  ],
+  registry: :global
+
+config :conduit, Conduit.EventStore, registry: :distributed
 
 # Configures the endpoint
 config :conduit, ConduitWeb.Endpoint,
@@ -24,9 +31,6 @@ config :conduit, ConduitWeb.Endpoint,
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
-
-config :commanded,
-  event_store_adapter: Commanded.EventStore.Adapters.EventStore
 
 config :commanded_ecto_projections,
   repo: Conduit.Repo
