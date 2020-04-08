@@ -21,9 +21,7 @@ defmodule Conduit.Storage do
   end
 
   defp reset_readstore! do
-    readstore_config = Application.get_env(:conduit, Conduit.Repo)
-
-    {:ok, conn} = Postgrex.start_link(readstore_config)
+    {:ok, conn} = Postgrex.start_link(Conduit.Repo.config())
 
     Postgrex.query!(conn, truncate_readstore_tables(), [])
   end
