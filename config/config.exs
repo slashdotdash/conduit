@@ -18,7 +18,7 @@ config :conduit, ConduitWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "hXslnxxJrzfI918PrmgkZZwJU3GYhT8y1500AP6Foxq9aDgjChbi0BcMdsscFkAs",
   render_errors: [view: ConduitWeb.ErrorView, accepts: ~w(json)],
-  pubsub: [name: Conduit.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub_server: Conduit.PubSub
 
 # Configures Elixir's Logger
 config :logger, :console,

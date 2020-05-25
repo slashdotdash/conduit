@@ -9,6 +9,9 @@ defmodule Conduit.Application do
       # Start the Ecto repository
       Conduit.Repo,
 
+      # Start the Phoenix PubSub system
+      {Phoenix.PubSub, name: Conduit.PubSub},
+
       # Start the endpoint when the application starts
       ConduitWeb.Endpoint,
 

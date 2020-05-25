@@ -13,7 +13,8 @@ defmodule ConduitWeb.ConnCase do
   using do
     quote do
       # Import conveniences for testing with connections
-      use Phoenix.ConnTest
+      import Plug.Conn
+      import Phoenix.ConnTest
 
       import ConduitWeb.ConnHelpers
       import ConduitWeb.Router.Helpers
@@ -27,7 +28,7 @@ defmodule ConduitWeb.ConnCase do
 
   setup _tags do
     Conduit.Storage.reset!()
-    
+
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end
