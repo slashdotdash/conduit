@@ -3,7 +3,7 @@ defmodule ConduitWeb.TagController do
 
   alias Conduit.Blog
 
-  action_fallback ConduitWeb.FallbackController
+  action_fallback(ConduitWeb.FallbackController)
 
   def index(conn, _params) do
     tags = Blog.list_tags()

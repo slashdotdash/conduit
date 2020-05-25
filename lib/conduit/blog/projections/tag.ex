@@ -5,7 +5,7 @@ defmodule Conduit.Blog.Projections.Tag do
   @timestamps_opts [type: :utc_datetime_usec]
 
   schema "blog_tags" do
-    field :name, :string
+    field(:name, :string)
 
     timestamps()
   end

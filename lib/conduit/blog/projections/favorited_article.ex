@@ -5,9 +5,9 @@ defmodule Conduit.Blog.Projections.FavoritedArticle do
   @timestamps_opts [type: :utc_datetime_usec]
 
   schema "blog_favorited_articles" do
-    field :article_uuid, :binary_id, primary_key: true
-    field :favorited_by_author_uuid, :binary_id, primary_key: true
-    field :favorited_by_username, :string
+    field(:article_uuid, :binary_id, primary_key: true)
+    field(:favorited_by_author_uuid, :binary_id, primary_key: true)
+    field(:favorited_by_username, :string)
 
     timestamps()
   end

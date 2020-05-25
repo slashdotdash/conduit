@@ -3,6 +3,6 @@ defmodule Conduit.Blog.Events.AuthorCreated do
   defstruct [
     :author_uuid,
     :user_uuid,
-    :username,
+    :username
   ]
 end

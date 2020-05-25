@@ -12,7 +12,7 @@ defmodule Conduit.Blog.Slugger do
 
     - "Example article" => "example-article", "example-article-2", "example-article-3", etc.
   """
-  @spec slugify(String.t) :: {:ok, slug :: String.t} | {:error, reason :: term}
+  @spec slugify(String.t()) :: {:ok, slug :: String.t()} | {:error, reason :: term}
   def slugify(title) do
     title
     |> Slugger.slugify_downcase()
@@ -22,6 +22,7 @@ defmodule Conduit.Blog.Slugger do
   # Ensure the given slug is unique, if not increment the suffix and try again.
   defp ensure_unique_slug(slug, suffix \\ 1)
   defp ensure_unique_slug("", _suffix), do: ""
+
   defp ensure_unique_slug(slug, suffix) do
     suffixed_slug = suffixed(slug, suffix)
 

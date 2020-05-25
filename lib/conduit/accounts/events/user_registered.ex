@@ -4,6 +4,6 @@ defmodule Conduit.Accounts.Events.UserRegistered do
     :user_uuid,
     :username,
     :email,
-    :hashed_password,
+    :hashed_password
   ]
 end

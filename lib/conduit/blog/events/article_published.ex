@@ -7,6 +7,6 @@ defmodule Conduit.Blog.Events.ArticlePublished do
     :title,
     :description,
     :body,
-    :tag_list,
+    :tag_list
   ]
 end

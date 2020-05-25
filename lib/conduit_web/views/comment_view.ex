@@ -4,7 +4,7 @@ defmodule ConduitWeb.CommentView do
 
   def render("index.json", %{comments: comments}) do
     %{
-      comments: render_many(comments, CommentView, "comment.json"),
+      comments: render_many(comments, CommentView, "comment.json")
     }
   end
 
@@ -22,8 +22,8 @@ defmodule ConduitWeb.CommentView do
         username: comment.author_username,
         bio: comment.author_bio,
         image: comment.author_image,
-        following: false,
-      },
+        following: false
+      }
     }
   end
 end

@@ -2,11 +2,14 @@ defmodule Conduit.Router do
   use Commanded.Commands.Router
 
   alias Conduit.Accounts.Aggregates.User
+
   alias Conduit.Accounts.Commands.{
     RegisterUser,
-    UpdateUser,
+    UpdateUser
   }
-  alias Conduit.Blog.Aggregates.{Article,Author,Comment}
+
+  alias Conduit.Blog.Aggregates.{Article, Author, Comment}
+
   alias Conduit.Blog.Commands.{
     CreateAuthor,
     CommentOnArticle,
@@ -15,37 +18,51 @@ defmodule Conduit.Router do
     FollowAuthor,
     PublishArticle,
     UnfavoriteArticle,
-    UnfollowAuthor,
+    UnfollowAuthor
   }
-  alias Conduit.Support.Middleware.{Uniqueness,Validate}
 
-  middleware Validate
-  middleware Uniqueness
+  alias Conduit.Support.Middleware.{Uniqueness, Validate}
 
-  identify Article, by: :article_uuid, prefix: "article-"
-  identify Author, by: :author_uuid, prefix: "author-"
-  identify Comment, by: :comment_uuid, prefix: "comment-"
-  identify User, by: :user_uuid, prefix: "user-"
+  middleware(Validate)
+  middleware(Uniqueness)
 
-  dispatch [
-    PublishArticle,
-    FavoriteArticle,
-    UnfavoriteArticle
-  ], to: Article
+  identify(Article, by: :article_uuid, prefix: "article-")
+  identify(Author, by: :author_uuid, prefix: "author-")
+  identify(Comment, by: :comment_uuid, prefix: "comment-")
+  identify(User, by: :user_uuid, prefix: "user-")
 
-  dispatch [
-    CreateAuthor,
-    FollowAuthor,
-    UnfollowAuthor,
-  ], to: Author
+  dispatch(
+    [
+      PublishArticle,
+      FavoriteArticle,
+      UnfavoriteArticle
+    ],
+    to: Article
+  )
 
-  dispatch [
-    CommentOnArticle,
-    DeleteComment,
-  ], to: Comment, lifespan: Comment
+  dispatch(
+    [
+      CreateAuthor,
+      FollowAuthor,
+      UnfollowAuthor
+    ],
+    to: Author
+  )
 
-  dispatch [
-    RegisterUser,
-    UpdateUser,
-  ], to: User
+  dispatch(
+    [
+      CommentOnArticle,
+      DeleteComment
+    ],
+    to: Comment,
+    lifespan: Comment
+  )
+
+  dispatch(
+    [
+      RegisterUser,
+      UpdateUser
+    ],
+    to: User
+  )
 end

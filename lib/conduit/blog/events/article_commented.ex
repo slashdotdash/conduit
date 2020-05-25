@@ -4,6 +4,6 @@ defmodule Conduit.Blog.Events.ArticleCommented do
     :comment_uuid,
     :body,
     :article_uuid,
-    :author_uuid,
+    :author_uuid
   ]
 end

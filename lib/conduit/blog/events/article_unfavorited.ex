@@ -3,6 +3,6 @@ defmodule Conduit.Blog.Events.ArticleUnfavorited do
   defstruct [
     :article_uuid,
     :unfavorited_by_author_uuid,
-    :favorite_count,
+    :favorite_count
   ]
 end

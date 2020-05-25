@@ -3,7 +3,7 @@ defmodule Conduit.Blog.Projections.Article do
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
   @timestamps_opts [type: :utc_datetime_usec]
-  
+
   schema "blog_articles" do
     field(:slug, :string)
     field(:title, :string)

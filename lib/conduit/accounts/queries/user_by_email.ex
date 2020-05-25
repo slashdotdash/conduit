@@ -4,7 +4,8 @@ defmodule Conduit.Accounts.Queries.UserByEmail do
   alias Conduit.Accounts.Projections.User
 
   def new(email) do
-    from u in User,
-    where: u.email == ^email
+    from(u in User,
+      where: u.email == ^email
+    )
   end
 end

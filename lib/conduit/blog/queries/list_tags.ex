@@ -4,7 +4,8 @@ defmodule Conduit.Blog.Queries.ListTags do
   alias Conduit.Blog.Projections.Tag
 
   def new do
-    from t in Tag,
-    order_by: t.name
+    from(t in Tag,
+      order_by: t.name
+    )
   end
 end

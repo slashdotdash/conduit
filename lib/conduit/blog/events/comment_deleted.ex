@@ -3,6 +3,6 @@ defmodule Conduit.Blog.Events.CommentDeleted do
   defstruct [
     :comment_uuid,
     :article_uuid,
-    :author_uuid,
+    :author_uuid
   ]
 end

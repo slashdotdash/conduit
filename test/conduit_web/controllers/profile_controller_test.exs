@@ -7,22 +7,22 @@ defmodule ConduitWeb.ProfileControllerTest do
 
   describe "get profile" do
     setup [
-      :create_author,
+      :create_author
     ]
 
     @tag :web
     test "should return author profile", %{conn: conn} do
-      conn = get conn, profile_path(conn, :show, "jake")
+      conn = get(conn, profile_path(conn, :show, "jake"))
       json = json_response(conn, 200)
 
       assert json == %{
-        "profile" => %{
-          "username" => "jake",
-          "bio" => nil,
-          "image" => nil,
-          "following" => false,
-        }
-      }
+               "profile" => %{
+                 "username" => "jake",
+                 "bio" => nil,
+                 "image" => nil,
+                 "following" => false
+               }
+             }
     end
   end
 
@@ -30,22 +30,22 @@ defmodule ConduitWeb.ProfileControllerTest do
     setup [
       :register_user,
       :get_author,
-      :create_author_to_follow,
+      :create_author_to_follow
     ]
 
     @tag :web
     test "should follow author", %{conn: conn, user: user} do
-      conn = post authenticated_conn(conn, user), profile_path(conn, :follow, "jane")
+      conn = post(authenticated_conn(conn, user), profile_path(conn, :follow, "jane"))
       json = json_response(conn, 201)
 
       assert json == %{
-        "profile" => %{
-          "username" => "jane",
-          "bio" => nil,
-          "image" => nil,
-          "following" => true,
-        }
-      }
+               "profile" => %{
+                 "username" => "jane",
+                 "bio" => nil,
+                 "image" => nil,
+                 "following" => true
+               }
+             }
     end
   end
 
@@ -54,22 +54,22 @@ defmodule ConduitWeb.ProfileControllerTest do
       :register_user,
       :get_author,
       :create_author_to_follow,
-      :follow_author,
+      :follow_author
     ]
 
     @tag :web
     test "should follow author", %{conn: conn, user: user} do
-      conn = delete authenticated_conn(conn, user), profile_path(conn, :follow, "jane")
+      conn = delete(authenticated_conn(conn, user), profile_path(conn, :follow, "jane"))
       json = json_response(conn, 201)
 
       assert json == %{
-        "profile" => %{
-          "username" => "jane",
-          "bio" => nil,
-          "image" => nil,
-          "following" => false,
-        }
-      }
+               "profile" => %{
+                 "username" => "jane",
+                 "bio" => nil,
+                 "image" => nil,
+                 "following" => false
+               }
+             }
     end
   end
 
@@ -78,22 +78,22 @@ defmodule ConduitWeb.ProfileControllerTest do
       :register_user,
       :get_author,
       :create_author_to_follow,
-      :follow_author,
+      :follow_author
     ]
 
     @tag :web
     test "should return author profile", %{conn: conn, user: user} do
-      conn = get authenticated_conn(conn, user), profile_path(conn, :show, "jane")
+      conn = get(authenticated_conn(conn, user), profile_path(conn, :show, "jane"))
       json = json_response(conn, 200)
 
       assert json == %{
-        "profile" => %{
-          "username" => "jane",
-          "bio" => nil,
-          "image" => nil,
-          "following" => true,
-        }
-      }
+               "profile" => %{
+                 "username" => "jane",
+                 "bio" => nil,
+                 "image" => nil,
+                 "following" => true
+               }
+             }
     end
   end
 end

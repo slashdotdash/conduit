@@ -3,7 +3,7 @@ defmodule Conduit.Blog.Projections.Comment do
 
   @primary_key {:uuid, :binary_id, autogenerate: false}
   @timestamps_opts [type: :utc_datetime_usec]
-  
+
   schema "blog_comments" do
     field(:body, :string)
     field(:article_uuid, :binary_id)

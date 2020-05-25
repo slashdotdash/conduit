@@ -4,10 +4,10 @@ defmodule Conduit.Blog.Validators.UniqueArticleSlug do
   alias Conduit.Blog
 
   def validate(value, _options) do
-    Vex.Validators.By.validate(value, [
+    Vex.Validators.By.validate(value,
       function: fn value -> !article_exists?(value) end,
       message: "has already been taken"
-    ])
+    )
   end
 
   defp article_exists?(slug) do

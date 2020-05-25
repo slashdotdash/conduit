@@ -3,7 +3,8 @@ defmodule Conduit.Support.Validators.String do
 
   def validate(nil, _options), do: :ok
   def validate("", _options), do: :ok
+
   def validate(value, _options) do
-    Vex.Validators.By.validate(value, [function: &String.valid?/1])
+    Vex.Validators.By.validate(value, function: &String.valid?/1)
   end
 end

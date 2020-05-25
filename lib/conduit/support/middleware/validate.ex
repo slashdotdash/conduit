@@ -26,7 +26,8 @@ defmodule Conduit.Support.Middleware.Validate do
     errors
     |> Enum.group_by(
       fn {_error, field, _type, _message} -> field end,
-      fn {_error, _field, _type, message} -> message end)
+      fn {_error, _field, _type, message} -> message end
+    )
     |> Map.new()
   end
 end

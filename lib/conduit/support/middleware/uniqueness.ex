@@ -34,7 +34,7 @@ defmodule Conduit.Support.Middleware.Uniqueness do
   defp ensure_uniqueness(command) do
     command
     |> UniqueFields.unique()
-    |> Enum.reduce_while(:ok, fn ({unique_field, error_message, owner}, _) ->
+    |> Enum.reduce_while(:ok, fn {unique_field, error_message, owner}, _ ->
       value = Map.get(command, unique_field)
 
       case Unique.claim(unique_field, owner, value) do

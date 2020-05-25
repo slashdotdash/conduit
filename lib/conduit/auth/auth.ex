@@ -12,7 +12,7 @@ defmodule Conduit.Auth do
   def authenticate(email, password) do
     with {:ok, user} <- user_by_email(email) do
       check_password(user, password)
-   end
+    end
   end
 
   def hash_password(password), do: Bcrypt.hashpwsalt(password)

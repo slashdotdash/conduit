@@ -11,7 +11,7 @@ defmodule ConduitWeb.ProfileView do
       username: profile.username,
       bio: profile.bio,
       image: profile.image,
-      following: profile.following,
+      following: profile.following
     }
   end
 end

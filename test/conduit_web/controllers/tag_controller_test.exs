@@ -8,20 +8,20 @@ defmodule ConduitWeb.TagControllerTest do
   describe "list tags" do
     setup [
       :create_author,
-      :publish_article,
+      :publish_article
     ]
 
     @tag :web
     test "should return all tags", %{conn: conn} do
-      conn = get conn, tag_path(conn, :index)
+      conn = get(conn, tag_path(conn, :index))
       json = json_response(conn, 200)
 
       assert json == %{
-        "tags" => [
-          "dragons",
-          "training",
-        ]
-      }
+               "tags" => [
+                 "dragons",
+                 "training"
+               ]
+             }
     end
   end
 end

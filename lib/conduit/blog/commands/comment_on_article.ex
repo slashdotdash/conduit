@@ -1,21 +1,19 @@
 defmodule Conduit.Blog.Commands.CommentOnArticle do
-  defstruct [
-    comment_uuid: "",
-    body: "",
-    article_uuid: "",
-    author_uuid: "",
-  ]
+  defstruct comment_uuid: "",
+            body: "",
+            article_uuid: "",
+            author_uuid: ""
 
   use ExConstructor
   use Vex.Struct
 
-  alias Conduit.Blog.Projections.{Article,Author}
+  alias Conduit.Blog.Projections.{Article, Author}
   alias Conduit.Blog.Commands.CommentOnArticle
 
-  validates :comment_uuid, uuid: true
-  validates :body, presence: [message: "can't be empty"], string: true
-  validates :article_uuid, uuid: true
-  validates :author_uuid, uuid: true
+  validates(:comment_uuid, uuid: true)
+  validates(:body, presence: [message: "can't be empty"], string: true)
+  validates(:article_uuid, uuid: true)
+  validates(:author_uuid, uuid: true)
 
   def assign_uuid(%CommentOnArticle{} = comment, uuid) do
     %CommentOnArticle{comment | comment_uuid: uuid}

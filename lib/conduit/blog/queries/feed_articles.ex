@@ -1,13 +1,11 @@
 defmodule Conduit.Blog.Queries.FeedArticles do
   import Ecto.Query
 
-  alias Conduit.Blog.Projections.{Article,Author,FavoritedArticle,Feed}
+  alias Conduit.Blog.Projections.{Article, Author, FavoritedArticle, Feed}
 
   defmodule Options do
-    defstruct [
-      limit: 20,
-      offset: 0,
-    ]
+    defstruct limit: 20,
+              offset: 0
 
     use ExConstructor
   end
@@ -40,13 +38,14 @@ defmodule Conduit.Blog.Queries.FeedArticles do
   end
 
   defp join_and_select_article(query) do
-    from f in query,
-    join: a in Article, on: a.uuid == f.article_uuid
+    from(f in query, join: a in Article, on: a.uuid == f.article_uuid)
   end
 
   defp include_favorited_by_author(query, %Author{uuid: author_uuid}) do
-    from [feed, a] in query,
-    left_join: f in FavoritedArticle, on: [article_uuid: a.uuid, favorited_by_author_uuid: ^author_uuid],
-    select: %{a | favorited: not is_nil(f.article_uuid)}
+    from([feed, a] in query,
+      left_join: f in FavoritedArticle,
+      on: [article_uuid: a.uuid, favorited_by_author_uuid: ^author_uuid],
+      select: %{a | favorited: not is_nil(f.article_uuid)}
+    )
   end
 end

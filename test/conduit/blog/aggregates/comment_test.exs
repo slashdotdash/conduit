@@ -2,12 +2,12 @@ defmodule Conduit.Blog.CommentTest do
   use Conduit.AggregateCase, aggregate: Conduit.Blog.Aggregates.Comment
 
   alias Conduit.Blog.Commands.{
-    DeleteComment,
+    DeleteComment
   }
 
   alias Conduit.Blog.Events.{
     ArticleCommented,
-    CommentDeleted,
+    CommentDeleted
   }
 
   describe "comment on article" do
@@ -17,14 +17,21 @@ defmodule Conduit.Blog.CommentTest do
       article_uuid = UUID.uuid4()
       author_uuid = UUID.uuid4()
 
-      assert_events build(:comment_on_article, comment_uuid: comment_uuid, article_uuid: article_uuid, author_uuid: author_uuid), [
-        %ArticleCommented{
+      assert_events(
+        build(:comment_on_article,
           comment_uuid: comment_uuid,
-          body: "It takes a Jacobian",
           article_uuid: article_uuid,
-          author_uuid: author_uuid,
-        },
-      ]
+          author_uuid: author_uuid
+        ),
+        [
+          %ArticleCommented{
+            comment_uuid: comment_uuid,
+            body: "It takes a Jacobian",
+            article_uuid: article_uuid,
+            author_uuid: author_uuid
+          }
+        ]
+      )
     end
   end
 
@@ -35,16 +42,23 @@ defmodule Conduit.Blog.CommentTest do
       article_uuid = UUID.uuid4()
       user_uuid = UUID.uuid4()
 
-      assert_events [
-        build(:comment_on_article, comment_uuid: comment_uuid, article_uuid: article_uuid, author_uuid: user_uuid),
-        %DeleteComment{comment_uuid: comment_uuid, deleted_by_author_uuid: user_uuid},
-      ], [
-        %CommentDeleted{
-          comment_uuid: comment_uuid,
-          article_uuid: article_uuid,
-          author_uuid: user_uuid,
-        },
-      ]
+      assert_events(
+        [
+          build(:comment_on_article,
+            comment_uuid: comment_uuid,
+            article_uuid: article_uuid,
+            author_uuid: user_uuid
+          ),
+          %DeleteComment{comment_uuid: comment_uuid, deleted_by_author_uuid: user_uuid}
+        ],
+        [
+          %CommentDeleted{
+            comment_uuid: comment_uuid,
+            article_uuid: article_uuid,
+            author_uuid: user_uuid
+          }
+        ]
+      )
     end
 
     @tag :unit
@@ -54,10 +68,20 @@ defmodule Conduit.Blog.CommentTest do
       author_uuid = UUID.uuid4()
       deleted_by_author_uuid = UUID.uuid4()
 
-      assert_error [
-        build(:comment_on_article, comment_uuid: comment_uuid, article_uuid: article_uuid, author_uuid: author_uuid),
-        %DeleteComment{comment_uuid: comment_uuid, deleted_by_author_uuid: deleted_by_author_uuid},
-      ], {:error, :only_comment_author_can_delete}
+      assert_error(
+        [
+          build(:comment_on_article,
+            comment_uuid: comment_uuid,
+            article_uuid: article_uuid,
+            author_uuid: author_uuid
+          ),
+          %DeleteComment{
+            comment_uuid: comment_uuid,
+            deleted_by_author_uuid: deleted_by_author_uuid
+          }
+        ],
+        {:error, :only_comment_author_can_delete}
+      )
     end
   end
 end
