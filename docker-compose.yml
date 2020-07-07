@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    depends_on:
+      - eventstore
+      - readstore
+    ports:
+      - 4000:4000
+
+  eventstore:
+    image: postgres
+
+  readstore:
+    image: postgres
