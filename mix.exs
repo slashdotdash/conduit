@@ -25,10 +25,10 @@ defmodule Conduit.Mixfile do
     [
       {:bcrypt_elixir, "~> 1.0"},
       {:comeonin, "~> 4.0"},
-      {:commanded, "~> 1.0"},
-      {:commanded_ecto_projections, "~> 1.0"},
-      {:commanded_eventstore_adapter, "~> 1.0"},
-      {:eventstore, "~> 1.0"},
+      {:commanded, "~> 1.1"},
+      {:commanded_ecto_projections, "~> 1.1"},
+      {:commanded_eventstore_adapter, "~> 1.1"},
+      {:eventstore, "~> 1.1"},
       {:cors_plug, "~> 1.4"},
       {:elixir_uuid, "~> 1.2"},
       {:plug_cowboy, "~> 1.0"},
@@ -40,7 +40,7 @@ defmodule Conduit.Mixfile do
       {:mix_test_watch, "~> 0.5", only: :dev, runtime: false},
       {:phoenix, "~> 1.4"},
       {:phoenix_ecto, "~> 4.0"},
-      {:phoenix_pubsub, "~> 1.1"},
+      {:phoenix_pubsub, "~> 2.0"},
       {:postgrex, ">= 0.0.0"},
       {:slugger, "~> 0.2"},
       {:vex, "~> 0.6"}

@@ -18,7 +18,7 @@ config :conduit, Conduit.App,
   ],
   registry: :global
 
-config :conduit, Conduit.EventStore, registry: :distributed
+config :conduit, Conduit.EventStore
 
 # Configures the endpoint
 config :conduit, ConduitWeb.Endpoint,
