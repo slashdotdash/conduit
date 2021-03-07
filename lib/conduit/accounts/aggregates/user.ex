@@ -6,6 +6,7 @@ defmodule Conduit.Accounts.Aggregates.User do
     :hashed_password
   ]
 
+  alias Conduit.Commanded.UncommittedChanges
   alias Conduit.Accounts.Aggregates.User
 
   alias Conduit.Accounts.Commands.{
@@ -36,13 +37,11 @@ defmodule Conduit.Accounts.Aggregates.User do
   Update a user's username, email, and password
   """
   def execute(%User{} = user, %UpdateUser{} = update) do
-    Enum.reduce([&username_changed/2, &email_changed/2, &password_changed/2], [], fn change,
-                                                                                     events ->
-      case change.(user, update) do
-        nil -> events
-        event -> [event | events]
-      end
-    end)
+    UncommittedChanges.new()
+    |> username_changed(user, update)
+    |> email_changed(user, update)
+    |> password_changed(user, update)
+    |> UncommittedChanges.get_events()
   end
 
   # state mutators
@@ -71,37 +70,41 @@ defmodule Conduit.Accounts.Aggregates.User do
 
   # private helpers
 
-  defp username_changed(%User{}, %UpdateUser{username: ""}), do: nil
-  defp username_changed(%User{username: username}, %UpdateUser{username: username}), do: nil
+  defp username_changed(changes, %User{}, %UpdateUser{username: ""}), do: changes
 
-  defp username_changed(%User{uuid: user_uuid}, %UpdateUser{username: username}) do
-    %UsernameChanged{
+  defp username_changed(changes, %User{username: username}, %UpdateUser{username: username}),
+    do: changes
+
+  defp username_changed(changes, %User{uuid: user_uuid}, %UpdateUser{username: username}) do
+    UncommittedChanges.append_event(changes, %UsernameChanged{
       user_uuid: user_uuid,
       username: username
-    }
+    })
   end
 
-  defp email_changed(%User{}, %UpdateUser{email: ""}), do: nil
-  defp email_changed(%User{email: email}, %UpdateUser{email: email}), do: nil
+  defp email_changed(changes, %User{}, %UpdateUser{email: ""}), do: changes
+  defp email_changed(changes, %User{email: email}, %UpdateUser{email: email}), do: changes
 
-  defp email_changed(%User{uuid: user_uuid}, %UpdateUser{email: email}) do
-    %UserEmailChanged{
+  defp email_changed(changes, %User{uuid: user_uuid}, %UpdateUser{email: email}) do
+    UncommittedChanges.append_event(changes, %UserEmailChanged{
       user_uuid: user_uuid,
       email: email
-    }
+    })
   end
 
-  defp password_changed(%User{}, %UpdateUser{hashed_password: ""}), do: nil
+  defp password_changed(changes, %User{}, %UpdateUser{hashed_password: ""}), do: changes
 
-  defp password_changed(%User{hashed_password: hashed_password}, %UpdateUser{
+  defp password_changed(changes, %User{hashed_password: hashed_password}, %UpdateUser{
          hashed_password: hashed_password
        }),
-       do: nil
+       do: changes
 
-  defp password_changed(%User{uuid: user_uuid}, %UpdateUser{hashed_password: hashed_password}) do
-    %UserPasswordChanged{
+  defp password_changed(changes, %User{uuid: user_uuid}, %UpdateUser{
+         hashed_password: hashed_password
+       }) do
+    UncommittedChanges.append_event(changes, %UserPasswordChanged{
       user_uuid: user_uuid,
       hashed_password: hashed_password
-    }
+    })
   end
 end
